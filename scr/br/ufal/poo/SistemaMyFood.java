@@ -69,7 +69,7 @@ public class SistemaMyFood {
         }
 
         // Validação do CPF, se fornecido
-        if (cpf != null && (cpf.length() != 14)) {
+        if (cpf == null || (cpf.length() != 14))  {
             throw new IllegalArgumentException("CPF invalido");
         }
     }
