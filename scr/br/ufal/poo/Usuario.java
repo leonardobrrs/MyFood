@@ -73,6 +73,8 @@ public abstract class Usuario {
                 return getNome();
             case "email":
                 return getEmail();
+            case "senha":
+                return getSenha();  // Adicionado para incluir senha
             case "endereco":
                 return getEndereco();
             default:
