@@ -1,7 +1,5 @@
 package scr.br.ufal.poo;
 
-import easyaccept.EasyAccept;
-
 public class Facade {
     private SistemaMyFood sistema;
 
@@ -25,8 +23,22 @@ public class Facade {
         return sistema.login(email, senha);
     }
 
-    public String getAtributoUsuario(int id, String atributo) {
-        return sistema.getAtributoUsuario(id, atributo);
+
+
+    public void criarEmpresa(String tipoEmpresa, int donoId, String nome, String endereco, String tipoCozinha) {
+        sistema.criarEmpresa(tipoEmpresa, donoId, nome, endereco, tipoCozinha);
+    }
+
+    public String getEmpresasDoUsuario(int idDono) {
+        return sistema.getEmpresasDoUsuario(idDono);
+    }
+
+    public int getIdEmpresa(int idDono, String nome, int indice) {
+        return sistema.getIdEmpresa(idDono, nome, indice);
+    }
+
+    public String getAtributoEmpresa(int empresaId, String atributo) {
+        return sistema.getAtributoEmpresa(empresaId, atributo);
     }
 
     public void encerrarSistema() {
