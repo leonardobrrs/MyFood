@@ -11,4 +11,5 @@ public class Main {  // Nome da classe alterado para 'Main'
         };
         EasyAccept.main(args);
     }
+
 }
