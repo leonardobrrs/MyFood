@@ -1,3 +1,5 @@
+package scr.br.ufal.poo;
+
 public class Usuario {
     private static int contadorId = 0;
     private int id;

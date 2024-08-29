@@ -1,3 +1,5 @@
+package scr.br.ufal.poo;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,3 +72,4 @@ public class Sistema {
         System.exit(0);
     }
 }
+

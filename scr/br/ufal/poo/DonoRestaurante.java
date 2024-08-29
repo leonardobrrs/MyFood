@@ -1,3 +1,5 @@
+package scr.br.ufal.poo;
+
 public class DonoRestaurante extends Usuario {
     private String endereco;
     private String cpf;
