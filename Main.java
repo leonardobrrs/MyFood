@@ -5,7 +5,8 @@ public class Main {  // Nome da classe alterado para 'Main'
         // Caminho para a classe de fachada e para os arquivos de teste
         args = new String[] {
                 "scr.br.ufal.poo.Facade",   // Nome completo da classe de fachada, incluindo o pacote
-                "testes/us1_1.txt"     // Caminho relativo para o arquivo de teste
+                "testes/us1_1.txt",
+                "testes/us1_2.txt"// Caminho relativo para o arquivo de teste
         };
         EasyAccept.main(args);
     }
