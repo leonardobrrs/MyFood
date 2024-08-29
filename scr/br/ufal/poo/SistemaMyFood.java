@@ -12,6 +12,7 @@ public class SistemaMyFood {
         this.usuariosPorEmail = new HashMap<>();
     }
 
+
     public void zerarSistema() {
         usuarios.clear();
         usuariosPorEmail.clear();
