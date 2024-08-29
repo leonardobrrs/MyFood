@@ -18,10 +18,10 @@ public class SistemaMyFood {
     }
 
     public void criarUsuario(String nome, String email, String senha, String endereco) {
-        // Validação dos dados
+        // Validação dos dados para cliente (sem CPF)
         validarDados(nome, email, senha, endereco, null);
 
-        // Verificação de email existente
+        // Verificação de e-mail existente
         if (usuariosPorEmail.containsKey(email)) {
             throw new IllegalArgumentException("Conta com esse email ja existe");
         }
@@ -32,11 +32,12 @@ public class SistemaMyFood {
         usuariosPorEmail.put(email, cliente);
     }
 
+
     public void criarUsuario(String nome, String email, String senha, String endereco, String cpf) {
-        // Validação dos dados
+        // Validação dos dados para dono de restaurante (com CPF)
         validarDados(nome, email, senha, endereco, cpf);
 
-        // Verificação de email existente
+        // Verificação de e-mail existente
         if (usuariosPorEmail.containsKey(email)) {
             throw new IllegalArgumentException("Conta com esse email ja existe");
         }
@@ -46,6 +47,8 @@ public class SistemaMyFood {
         usuarios.put(dono.getId(), dono);
         usuariosPorEmail.put(email, dono);
     }
+
+
 
     private void validarDados(String nome, String email, String senha, String endereco, String cpf) {
         // Validação do nome
@@ -69,7 +72,7 @@ public class SistemaMyFood {
         }
 
         // Validação do CPF, se fornecido
-        if (cpf != null && (cpf.length() != 14)) {
+        if (cpf != null && (cpf.trim().isEmpty() || cpf.length() != 14)) {
             throw new IllegalArgumentException("CPF invalido");
         }
     }

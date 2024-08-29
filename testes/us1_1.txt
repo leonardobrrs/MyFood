@@ -90,7 +90,7 @@ expectError "Senha invalido" criarUsuario nome="Carlos" email="carlos@ufal.com.b
 expectError "Endereco invalido" criarUsuario nome="Carlos" email="carlos@ufal.com.br" senha="123senha" endereco=  
 expectError "Endereco invalido" criarUsuario nome="Carlos" email="carlos@ufal.com.br" senha="123senha" endereco=""  
 
-expectError "CPF invalido" criarUsuario nome="CarlosDono" email="carlos2@ufal.com.br" senha="123senha", endereco="Rua Exemplo N 123" cpf=  
+expectError "CPF invalido" criarUsuario nome="CarlosDono" email="carlos2@ufal.com.br" senha="123senha", endereco="Rua Exemplo N 123" cpf=
 expectError "CPF invalido" criarUsuario nome="CarlosDono" email="carlos2@ufal.com.br" senha="123senha", endereco="Rua Exemplo N 123" cpf=""  
 
 expectError "Endereco invalido" criarUsuario nome="CarlosDono" email="carlos2@ufal.com.br" senha="123senha" endereco="" cpf="544.732.410-68"
