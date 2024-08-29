@@ -8,13 +8,13 @@ public class DonoRestaurante extends Usuario {
         this.cpf = validarCpf(cpf);
     }
 
-    // Validação específica para CPF
     private String validarCpf(String cpf) {
-        if (cpf == null || cpf.length() != 14) {
+        if (cpf == null || cpf.trim().isEmpty() || cpf.length() != 14) {
             throw new IllegalArgumentException("CPF invalido");
         }
         return cpf;
     }
+
 
     public String getCpf() {
         return cpf;
