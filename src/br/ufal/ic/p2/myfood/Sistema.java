@@ -15,12 +15,14 @@ public class Sistema {
     private Map<String, Usuario> usuariosPorEmail;
     private Map<Integer, Restaurante> restaurantes;
     private Map<Integer, List<Restaurante>> restaurantesPorDono;
+    private Map<Integer, Integer> empresasPorDono;
 
     public Sistema() {
         this.usuarios = new HashMap<>();
         this.usuariosPorEmail = new HashMap<>();
         this.restaurantes = new HashMap<>();
         this.restaurantesPorDono = new HashMap<>();
+        this.empresasPorDono = new HashMap<>();
     }
 
     public void zerarSistema(){
@@ -159,7 +161,7 @@ public class Sistema {
                 return restaurante.getId();
             }
         }
-        throw new IllegalArgumentException("Empresa não encontrada.");
+        throw new IllegalArgumentException("Nao existe empresa com esse nome");
     }
 
     // Método para retornar o valor de um atributo específico da empresa
