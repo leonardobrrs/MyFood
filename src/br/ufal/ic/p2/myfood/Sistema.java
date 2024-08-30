@@ -153,39 +153,48 @@ public class Sistema {
 
     // Método para retornar o ID da empresa a partir do índice
     public int getIdEmpresa(int idDono, String nome, int indice) {
+        // Verifica se o nome é válido
         if (nome == null || nome.trim().isEmpty()) {
             throw new IllegalArgumentException("Nome invalido");
         }
 
+        // Obtém a lista de empresas do dono
         List<Restaurante> empresas = restaurantesPorDono.get(idDono);
 
-        // Verifique se a lista de empresas é nula
+        // Verifica se a lista de empresas é nula ou vazia
         if (empresas == null || empresas.isEmpty()) {
-            throw new IllegalArgumentException("Empresa não encontrada.");
+            throw new IllegalArgumentException("Nao existe empresa com esse nome");
         }
 
-        // Verifique se o índice é negativo
+        // Verifica se o índice é negativo
         if (indice < 0) {
             throw new IllegalArgumentException("Indice invalido");
         }
 
-        // Verifique se o índice é maior que o tamanho da lista de empresas
-        if (indice >= empresas.size()) {
-            throw new IllegalArgumentException("Indice maior que o esperado");
-        }
+        // Cria uma lista para armazenar os IDs das empresas que correspondem ao nome fornecido
+        List<Integer> idsCorrespondentes = new ArrayList<>();
 
-        int currentIndex = 0;
+        // Itera sobre a lista de empresas para encontrar todas as empresas com o nome fornecido
         for (Restaurante restaurante : empresas) {
             if (restaurante.getNome().equals(nome)) {
-                if (currentIndex == indice) {
-                    return restaurante.getId();
-                }
-                currentIndex++;
+                idsCorrespondentes.add(restaurante.getId());
             }
         }
 
-        throw new IllegalArgumentException("Nao existe empresa com esse nome");
+        // Verifica se há empresas com o nome fornecido
+        if (idsCorrespondentes.isEmpty()) {
+            throw new IllegalArgumentException("Nao existe empresa com esse nome");
+        }
+
+        // Verifica se o índice é maior do que o número de empresas encontradas com o nome fornecido
+        if (indice >= idsCorrespondentes.size()) {
+            throw new IllegalArgumentException("Indice maior que o esperado");
+        }
+
+        // Retorna o ID da empresa no índice fornecido
+        return idsCorrespondentes.get(indice);
     }
+
 
 
     // Método para retornar o valor de um atributo específico da empresa
