@@ -169,6 +169,19 @@ public class Sistema {
             throw new IllegalArgumentException("Empresa nao cadastrada");
         }
 
+        if (atributo.equals("dono")) {
+            // Itera sobre o mapa de donos e verifica quem possui esse restaurante
+            for (Map.Entry<Integer, List<Restaurante>> entry : restaurantesPorDono.entrySet()) {
+                List<Restaurante> restaurantesDoDono = entry.getValue();
+                for (Restaurante r : restaurantesDoDono) {
+                    if (r.getId() == empresaId) {
+                        // Retorna o nome do dono
+                        return usuarios.get(entry.getKey()).getNome();
+                    }
+                }
+            }
+        }
+
         return restaurante.getAtributo(atributo);
     }
 
