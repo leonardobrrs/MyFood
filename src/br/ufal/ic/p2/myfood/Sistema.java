@@ -165,6 +165,10 @@ public class Sistema {
 
     // Método para retornar o valor de um atributo específico da empresa
     public String getAtributoEmpresa(int empresaId, String atributo) {
+        if(atributo == null){
+            throw new IllegalArgumentException("Atributo invalido");
+        }
+
         Restaurante restaurante = restaurantes.get(empresaId);
         if (restaurante == null) {
             throw new IllegalArgumentException("Empresa nao cadastrada");
