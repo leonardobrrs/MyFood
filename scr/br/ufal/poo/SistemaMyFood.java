@@ -42,7 +42,7 @@ public class SistemaMyFood {
         validarDados(nome, email, senha, endereco, cpf);
 
         if (usuariosPorEmail.containsKey(email)) {
-            throw new IllegalArgumentException("CPF invalido");
+            throw new IllegalArgumentException("CPF invalido");    // NÃO SEI PQ ISSO TA AQUI E FUNCIONA. POREM É ISSO!!!
         }
 
         DonoRestaurante dono = new DonoRestaurante(nome, email, senha, endereco, cpf);
