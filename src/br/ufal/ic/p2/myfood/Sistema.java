@@ -15,14 +15,12 @@ public class Sistema {
     private Map<String, Usuario> usuariosPorEmail;
     private Map<Integer, Restaurante> restaurantes;
     private Map<Integer, List<Restaurante>> restaurantesPorDono;
-    private Map<Integer, Integer> empresasPorDono;
 
     public Sistema() {
         this.usuarios = new HashMap<>();
         this.usuariosPorEmail = new HashMap<>();
         this.restaurantes = new HashMap<>();
         this.restaurantesPorDono = new HashMap<>();
-        this.empresasPorDono = new HashMap<>();
     }
 
     public void zerarSistema(){
