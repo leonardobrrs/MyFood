@@ -17,4 +17,9 @@ public class DonoRestaurante extends Usuario{
         }
         return super.getAtributo(atributo);  // Chamando o método da classe pai
     }
+
+    @Override
+    public boolean podeCriarEmpresa() {
+        return true; // DonoRestaurante pode criar empresas
+    }
 }

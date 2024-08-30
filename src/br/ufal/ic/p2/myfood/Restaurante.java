@@ -1,20 +1,19 @@
 package br.ufal.ic.p2.myfood;
 
-public abstract class Usuario {
+public class Restaurante {
     private static int contadorId = 1;
     private int id;
     private String nome;
-    private String email;
-    private String senha;
     private String endereco;
+    private String tipoCozinha;
 
-    public Usuario(String nome, String email, String senha, String endereco) {
+    public Restaurante(String nome, String endereco, String tipoCozinha) {
         this.id = contadorId++;
         this.nome = nome;
-        this.email = email;
-        this.senha = senha;
         this.endereco = endereco;
+        this.tipoCozinha = tipoCozinha;
     }
+
     public int getId() {
         return id;
     }
@@ -23,30 +22,21 @@ public abstract class Usuario {
         return nome;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
     public String getEndereco() { return endereco; }
+
+    public String getTipoCozinha() { return tipoCozinha; }
 
     public String getAtributo(String atributo) {
         switch (atributo) {
             case "nome":
                 return getNome();
-            case "email":
-                return getEmail();
-            case "senha":
-                return getSenha();
             case "endereco":
                 return getEndereco();
+            case "tipoCozinha":
+                return getTipoCozinha();
             default:
-                throw new IllegalArgumentException("Atributo nao encontrado.");
+                throw new IllegalArgumentException("Atributo invalido");
         }
     }
 
-    public abstract boolean podeCriarEmpresa();
 }

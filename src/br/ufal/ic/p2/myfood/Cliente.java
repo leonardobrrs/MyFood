@@ -6,4 +6,8 @@ public class Cliente extends Usuario{
         super(nome, email, senha, endereco);
     }
 
+    public boolean podeCriarEmpresa() {
+        return false; // Cliente não pode criar empresas
+    }
+
 }

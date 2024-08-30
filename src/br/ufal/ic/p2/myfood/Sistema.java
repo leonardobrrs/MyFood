@@ -6,20 +6,28 @@ import java.util.Map;
 import java.util.HashMap;
 import java.io.IOException;
 import java.io.FileWriter;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Sistema {
 
     private Map<Integer, Usuario> usuarios;
     private Map<String, Usuario> usuariosPorEmail;
+    private Map<Integer, Restaurante> restaurantes;
+    private Map<Integer, List<Restaurante>> restaurantesPorDono;
 
     public Sistema() {
         this.usuarios = new HashMap<>();
         this.usuariosPorEmail = new HashMap<>();
+        this.restaurantes = new HashMap<>();
+        this.restaurantesPorDono = new HashMap<>();
     }
 
     public void zerarSistema(){
         this.usuarios.clear();
         this.usuariosPorEmail.clear();
+        this.restaurantes.clear();
+        this.restaurantesPorDono.clear();
     }
 
     ///Criando o usuario cliente
@@ -69,6 +77,99 @@ public class Sistema {
         Usuario usuario = usuarios.get(id);
         if (usuario == null) throw new UsuarioNaoCadastradoException("Usuario nao cadastrado.");
         return usuario.getAtributo(atributo);
+    }
+
+    public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, String tipoCozinha) throws NomeEmpresaExistenteException, EnderecoDuplicadoException, UsuarioNaoAutorizadoException{
+
+        // Verificar se o usuário com o ID fornecido é um DonoRestaurante
+        Usuario usuario = usuarios.get(idDono);
+        if (usuario == null || !usuario.podeCriarEmpresa()) {
+            throw new UsuarioNaoAutorizadoException("Usuario nao pode criar uma empresa");
+        }
+
+        // Verificar se o dono já possui uma empresa com o mesmo nome e endereço
+        List<Restaurante> empresasDoDono = restaurantesPorDono.get(idDono);
+        if (empresasDoDono != null) {
+            for (Restaurante restaurante : empresasDoDono) {
+                if (restaurante.getNome().equals(nome) && restaurante.getEndereco().equals(endereco)) {
+                    throw new EnderecoDuplicadoException("Proibido cadastrar duas empresas com o mesmo nome e local");
+                }
+            }
+        }
+
+        // Verificar se existe uma empresa com o mesmo nome para qualquer dono
+        for (Restaurante restaurante : restaurantes.values()) {
+            if (restaurante.getNome().equals(nome) && restaurante.getEndereco().equals(endereco)) {
+                throw new NomeEmpresaExistenteException("Empresa com esse nome ja existe");
+            }
+        }
+
+        Restaurante restaurante = new Restaurante(nome, endereco, tipoCozinha);
+        restaurantes.put(restaurante.getId(), restaurante);
+
+        // Adicionar o restaurante à lista do dono
+        empresasDoDono = restaurantesPorDono.get(idDono);
+        if (empresasDoDono == null) {
+            empresasDoDono = new ArrayList<>();
+            restaurantesPorDono.put(idDono, empresasDoDono);
+        }
+        empresasDoDono.add(restaurante);
+
+        return restaurante.getId();
+    }
+
+    public String getEmpresasDoUsuario(int idDono) throws UsuarioNaoAutorizadoException{
+
+        // Verificar se o usuário com o ID fornecido é um DonoRestaurante
+        Usuario usuario = usuarios.get(idDono);
+        if (usuario == null || !usuario.podeCriarEmpresa()) {
+            throw new UsuarioNaoAutorizadoException("Usuario nao pode criar uma empresa");
+        }
+
+        // Obter as empresas do dono
+        List<Restaurante> empresasDoDono = restaurantesPorDono.get(idDono);
+        if (empresasDoDono == null || empresasDoDono.isEmpty()) {
+            return "{[]}"; // Nenhuma empresa encontrada
+        }
+
+        // Construir a string com o formato desejado
+        StringBuilder resultado = new StringBuilder("{[");
+        for (int i = 0; i < empresasDoDono.size(); i++) {
+            Restaurante restaurante = empresasDoDono.get(i);
+            if (i > 0) {
+                resultado.append(", ");
+            }
+            resultado.append("[")
+                    .append(restaurante.getNome())
+                    .append(", ")
+                    .append(restaurante.getEndereco())
+                    .append("]");
+        }
+        resultado.append("]}");
+
+        return resultado.toString();
+    }
+
+    // Método para retornar o ID da empresa a partir do índice
+    public int getIdEmpresa(int idDono, String nome, int indice) {
+        List<Restaurante> empresas = restaurantesPorDono.get(idDono);
+        if (empresas != null && indice >= 0 && indice < empresas.size()) {
+            Restaurante restaurante = empresas.get(indice);
+            if (restaurante.getNome().equals(nome)) {
+                return restaurante.getId();
+            }
+        }
+        throw new IllegalArgumentException("Empresa não encontrada.");
+    }
+
+    // Método para retornar o valor de um atributo específico da empresa
+    public String getAtributoEmpresa(int empresaId, String atributo) {
+        Restaurante restaurante = restaurantes.get(empresaId);
+        if (restaurante == null) {
+            throw new IllegalArgumentException("Empresa nao cadastrada");
+        }
+
+        return restaurante.getAtributo(atributo);
     }
 
 /*    public void salvarDadosEmCSV(String caminhoArquivo) throws IOException {

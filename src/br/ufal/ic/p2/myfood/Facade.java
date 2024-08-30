@@ -4,6 +4,7 @@ import br.ufal.ic.p2.myfood.Exceptions.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public class Facade {
@@ -33,6 +34,22 @@ public class Facade {
 
     public String getAtributoUsuario(int id, String atributo) throws UsuarioNaoCadastradoException{
         return sistema.getAtributoUsuario(id, atributo);
+    }
+
+    public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, String tipoCozinha) throws EnderecoDuplicadoException, NomeEmpresaExistenteException, UsuarioNaoAutorizadoException{
+        return sistema.criarEmpresa(tipoEmpresa, idDono, nome, endereco, tipoCozinha);
+    }
+
+    public String getEmpresasDoUsuario(int idDono) throws UsuarioNaoAutorizadoException{
+        return sistema.getEmpresasDoUsuario(idDono);
+    }
+
+    public int getIdEmpresa(int idDono, String nome, int indice) {
+        return sistema.getIdEmpresa(idDono, nome, indice);
+    }
+
+    public String getAtributoEmpresa(int empresaId, String atributo) {
+        return sistema.getAtributoEmpresa(empresaId, atributo);
     }
 
 /*    public void salvarDadosEmCSV(String caminhoArquivo) throws IOException {
