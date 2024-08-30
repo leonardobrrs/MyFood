@@ -169,11 +169,20 @@ public class Sistema {
             throw new IllegalArgumentException("Indice invalido");
         }
 
-        // Verifique se o índice é maior que o tamanho da lista de empresas
-        if (indice >= empresas.size()) {
+        // Contar quantas empresas têm o nome especificado
+        int nomeCount = 0;
+        for (Restaurante restaurante : empresas) {
+            if (restaurante.getNome().equals(nome)) {
+                nomeCount++;
+            }
+        }
+
+        // Verifique se o índice é maior que a quantidade de empresas com o nome
+        if (indice >= nomeCount) {
             throw new IllegalArgumentException("Indice maior que o esperado");
         }
 
+        // Agora que o índice é válido, retornar o ID da empresa correspondente
         int currentIndex = 0;
         for (Restaurante restaurante : empresas) {
             if (restaurante.getNome().equals(nome)) {
@@ -184,6 +193,7 @@ public class Sistema {
             }
         }
 
+        // Se não encontrar uma empresa com o nome, lançar exceção
         throw new IllegalArgumentException("Nao existe empresa com esse nome");
     }
 
