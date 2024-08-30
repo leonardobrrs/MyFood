@@ -115,6 +115,7 @@ public class Sistema {
             empresasDoDono = new ArrayList<>();
             restaurantesPorDono.put(idDono, empresasDoDono);
         }
+
         empresasDoDono.add(restaurante);
 
         return restaurante.getId();
