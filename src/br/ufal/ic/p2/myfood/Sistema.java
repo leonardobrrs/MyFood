@@ -153,15 +153,40 @@ public class Sistema {
 
     // Método para retornar o ID da empresa a partir do índice
     public int getIdEmpresa(int idDono, String nome, int indice) {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome invalido");
+        }
+
         List<Restaurante> empresas = restaurantesPorDono.get(idDono);
-        if (empresas != null && indice >= 0 && indice < empresas.size()) {
-            Restaurante restaurante = empresas.get(indice);
+
+        // Verifique se a lista de empresas é nula
+        if (empresas == null || empresas.isEmpty()) {
+            throw new IllegalArgumentException("Empresa não encontrada.");
+        }
+
+        // Verifique se o índice é negativo
+        if (indice < 0) {
+            throw new IllegalArgumentException("Indice invalido");
+        }
+
+        // Verifique se o índice é maior que o tamanho da lista de empresas
+        if (indice >= empresas.size()) {
+            throw new IllegalArgumentException("Indice maior que o esperado");
+        }
+
+        int currentIndex = 0;
+        for (Restaurante restaurante : empresas) {
             if (restaurante.getNome().equals(nome)) {
-                return restaurante.getId();
+                if (currentIndex == indice) {
+                    return restaurante.getId();
+                }
+                currentIndex++;
             }
         }
+
         throw new IllegalArgumentException("Nao existe empresa com esse nome");
     }
+
 
     // Método para retornar o valor de um atributo específico da empresa
     public String getAtributoEmpresa(int empresaId, String atributo) {
