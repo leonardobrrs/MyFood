@@ -18,6 +18,7 @@ public class SistemaMyFood {
         this.restaurantesPorId = new HashMap<>();
     }
 
+
     public void zerarSistema() {
         usuarios.clear();
         usuariosPorEmail.clear();
