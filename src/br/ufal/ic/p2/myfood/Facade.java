@@ -2,11 +2,7 @@ package br.ufal.ic.p2.myfood;
 
 import br.ufal.ic.p2.myfood.Exceptions.*;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class Facade {
     private Sistema sistema;
@@ -58,6 +54,9 @@ public class Facade {
 
         return sistema.criarProduto(empresa, nome, valor, categoria);
     }
+
+    public void editarProduto(int produto, String nome, float valor, String categoria) throws NomeInvalidoException,
+    CategoriaInvalidaException, ValorInvalidoException, ProdutoNaoCadastradoException {}
 
 /*    public void salvarDadosEmCSV(String caminhoArquivo) throws IOException {
         sistema.salvarDadosEmCSV(caminhoArquivo);

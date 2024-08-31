@@ -5,7 +5,6 @@ import br.ufal.ic.p2.myfood.Exceptions.*;
 import java.util.Map;
 import java.util.HashMap;
 import java.io.IOException;
-import java.io.FileWriter;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -261,8 +260,22 @@ public class Sistema {
         return produto.getId();
     }
 
-    public void editarProduto(int produto, String nome, float valor, String categoria){
+    public void editarProduto(int produto, String nome, float valor, String categoria) throws NomeInvalidoException,
+            CategoriaInvalidaException, ValorInvalidoException, ProdutoNaoCadastradoException {
 
+        Produto produto1 = produtos.get(produto);
+
+        if (produto1 == null) {
+            throw new ProdutoNaoCadastradoException();
+        }
+
+        if (nome == null || nome.trim().isEmpty()) throw new NomeInvalidoException();
+        if (categoria == null || categoria.trim().isEmpty()) throw new CategoriaInvalidaException();
+        if (valor <= 0) throw new ValorInvalidoException();
+
+        produto1.setNome(nome);
+        produto1.setValor(valor);
+        produto1.setCategoria(categoria);
 
     }
 
