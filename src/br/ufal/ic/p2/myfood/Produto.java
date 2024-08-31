@@ -1,8 +1,7 @@
 package br.ufal.ic.p2.myfood;
 
-import br.ufal.ic.p2.myfood.Exceptions.AtributoInvalidoException;
 import br.ufal.ic.p2.myfood.Exceptions.AtributoNaoExisteException;
-import br.ufal.ic.p2.myfood.Exceptions.ProdutoNaoEncontrado;
+import br.ufal.ic.p2.myfood.Exceptions.ProdutoNaoEncontradoException;
 
 public class Produto {
     private static int idCounter = 0; // Gerador de ID automático
@@ -34,7 +33,7 @@ public class Produto {
         return categoria;
     }
 
-    public String getAtributo(String atributo) throws AtributoNaoExisteException, ProdutoNaoEncontrado {
+    public String getAtributo(String atributo) throws AtributoNaoExisteException, ProdutoNaoEncontradoException {
         switch (atributo) {
             case "nome":
                 return getNome();

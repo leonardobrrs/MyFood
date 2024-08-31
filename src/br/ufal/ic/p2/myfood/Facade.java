@@ -61,7 +61,7 @@ public class Facade {
     }
 
     public String getProduto(String nome, int empresa, String atributo) throws AtributoNaoExisteException,
-            ProdutoNaoEncontrado{
+            ProdutoNaoEncontradoException {
         return sistema.getProduto(nome, empresa, atributo);
     }
 
@@ -71,6 +71,16 @@ public class Facade {
 
     public int criarPedido(int clienteId, int empresaId) throws DonoNaoPodePedidoException, PedidoEmAbertoException{
         return sistema.criarPedido(clienteId, empresaId);
+    }
+
+    public void adicionarProduto(int numero, int produto) throws PedidoNaoEncontradoException,
+            ProdutoNaoEncontradoException, ProdutoNaoPertenceEmpresaException, EmpresaNaoEncontradaException {
+        sistema.adicionarProduto(numero, produto);
+    }
+
+    public String getPedidos(int numeroPedido, String atributo) throws PedidoNaoEncontradoException,
+            AtributoInvalidoException, AtributoNaoExisteException {
+        return sistema.getPedidos(numeroPedido, atributo);
     }
 
 /*    public void salvarDadosEmCSV(String caminhoArquivo) throws IOException {

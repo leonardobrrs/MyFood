@@ -286,14 +286,14 @@ public class Sistema {
 
     }
 
-    public String getProduto(String nome, int empresa, String atributo) throws AtributoNaoExisteException, ProdutoNaoEncontrado {
+    public String getProduto(String nome, int empresa, String atributo) throws AtributoNaoExisteException, ProdutoNaoEncontradoException {
         if (atributo == null) {
             throw new AtributoNaoExisteException();
         }
 
         List<Produto> produtosDoRestaurante = produtosPorRestaurante.get(empresa);
         if (produtosDoRestaurante == null) {
-            throw new ProdutoNaoEncontrado();
+            throw new ProdutoNaoEncontradoException();
         }
 
         // Procurar o produto pelo nome dentro da lista de produtos do restaurante
@@ -306,7 +306,7 @@ public class Sistema {
                     if (restaurante != null) {
                         return restaurante.getNome();
                     } else {
-                        throw new ProdutoNaoEncontrado(); // Se o restaurante não for encontrado
+                        throw new ProdutoNaoEncontradoException(); // Se o restaurante não for encontrado
                     }
                 } else {
                     return produto.getAtributo(atributo);
@@ -314,7 +314,7 @@ public class Sistema {
             }
         }
 
-        throw new ProdutoNaoEncontrado(); // Produto com o nome especificado não encontrado
+        throw new ProdutoNaoEncontradoException(); // Produto com o nome especificado não encontrado
     }
 
     public String listarProdutos(int empresa)throws EmpresaNaoEncontradaException{
@@ -387,6 +387,86 @@ public class Sistema {
 
         return pedido.getNumero();
     }
+
+    public void adicionarProduto(int numeroPedido, int idProduto) throws ProdutoNaoEncontradoException, EmpresaNaoEncontradaException, ProdutoNaoPertenceEmpresaException, PedidoNaoEncontradoException {
+        Pedido pedido = pedidos.get(numeroPedido);
+        if (pedido == null) {
+            throw new PedidoNaoEncontradoException();
+        }
+
+        Produto produto = produtos.get(idProduto);
+        if (produto == null) {
+            throw new ProdutoNaoEncontradoException();
+        }
+
+        // Verifica se o produto pertence à empresa do pedido
+        String nomeEmpresaPedido = pedido.getEmpresa();
+        Restaurante restaurante = null;
+
+        // Encontrar o restaurante com base no nome
+        for (Restaurante r : restaurantes.values()) {
+            if (r.getNome().equals(nomeEmpresaPedido)) {
+                restaurante = r;
+                break;
+            }
+        }
+
+        if (restaurante == null) {
+            throw new EmpresaNaoEncontradaException();
+        }
+
+        // Verifica se o produto pertence ao restaurante
+        List<Produto> produtosDoRestaurante = produtosPorRestaurante.get(restaurante.getId());
+        if (produtosDoRestaurante == null || !produtosDoRestaurante.contains(produto)) {
+            throw new ProdutoNaoPertenceEmpresaException();
+        }
+
+        pedido.adicionarProduto(produto);
+    }
+
+
+    public String getPedidos(int numeroPedido, String atributo) throws PedidoNaoEncontradoException,
+            AtributoInvalidoException, AtributoNaoExisteException {
+        Pedido pedido = pedidos.get(numeroPedido);
+
+        if (pedido == null) {
+            throw new PedidoNaoEncontradoException();
+        }
+
+        if (atributo == null || atributo.trim().isEmpty()) {
+            throw new AtributoInvalidoException();
+        }
+
+        switch (atributo.toLowerCase()) {
+            case "cliente":
+                return pedido.getCliente();
+            case "empresa":
+                return pedido.getEmpresa();
+            case "estado":
+                return pedido.getEstado();
+            case "valor":
+                return String.format(Locale.US, "%.2f", pedido.getValor());
+            case "produtos":
+                List<Produto> produtos = pedido.getProdutos(); // Assumindo que o Pedido possui um método getProdutos()
+                if (produtos == null || produtos.isEmpty()) {
+                    return "{[]}"; // Nenhum produto encontrado
+                }
+                StringBuilder resultado = new StringBuilder("{[");
+                for (int i = 0; i < produtos.size(); i++) {
+                    Produto produto = produtos.get(i);
+                    if (i > 0) {
+                        resultado.append(", ");
+                    }
+                    resultado.append(produto.getNome());
+                }
+                resultado.append("]}");
+                return resultado.toString();
+            default:
+                throw new AtributoNaoExisteException();
+        }
+    }
+
+
 
 
 

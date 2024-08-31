@@ -48,8 +48,9 @@ public class Pedido {
 
     public void adicionarProduto(Produto produto) {
         produtos.add(produto);
-        valor += produto.getValor();  // Soma
+        valor += produto.getValor(); // Atualiza o valor total do pedido
     }
+
 
     public void finalizarPedido() {
         this.estado = "Finalizado";
