@@ -28,6 +28,7 @@ public class Restaurante {
 
     public String getTipoCozinha() { return tipoCozinha; }
 
+
     public String getAtributo(String atributo) throws AtributoInvalidoException {
         switch (atributo) {
             case "nome":
