@@ -17,6 +17,8 @@ public class Sistema {
     private Map<Integer, List<Restaurante>> restaurantesPorDono;
     private Map<Integer, Produto> produtos;
     private Map<Integer, List<Produto>> produtosPorRestaurante;
+    private Map<Integer, Pedido> pedidos;
+    private Map<Integer, List<Pedido>> pedidosPorRestaurante;
 
     public Sistema() {
         this.usuarios = new HashMap<>();
@@ -25,6 +27,8 @@ public class Sistema {
         this.restaurantesPorDono = new HashMap<>();
         this.produtos = new HashMap<>();
         this.produtosPorRestaurante = new HashMap<>();
+        this.pedidos = new HashMap<>();
+        this.pedidosPorRestaurante = new HashMap<>();
     }
 
     public void zerarSistema(){
@@ -34,6 +38,8 @@ public class Sistema {
         this.restaurantesPorDono.clear();
         this.produtos.clear();
         this.produtosPorRestaurante.clear();
+        this.pedidos.clear();
+        this.pedidosPorRestaurante.clear();
     }
 
     ///Criando o usuario cliente
@@ -246,7 +252,6 @@ public class Sistema {
             }
         }
 
-
         Produto produto = new Produto(nome, valor, categoria);
 
         // Adicionar o restaurante à lista do dono
@@ -337,6 +342,53 @@ public class Sistema {
 
         return resultado.toString();
     }
+
+    public int criarPedido(int clienteId, int empresaId) throws DonoNaoPodePedidoException, PedidoEmAbertoException {
+        Usuario cliente = usuarios.get(clienteId);
+        Restaurante restaurante = restaurantes.get(empresaId);
+
+        // Verifica se o cliente e o restaurante existem
+        if (cliente == null || restaurante == null) {
+            throw new DonoNaoPodePedidoException(); // Ou uma exceção mais específica
+        }
+
+        // Verifica se o cliente é o dono do restaurante
+        Usuario donoRestaurante = null;
+        for (Map.Entry<Integer, List<Restaurante>> entry : restaurantesPorDono.entrySet()) {
+            if (entry.getValue().contains(restaurante)) {
+                donoRestaurante = usuarios.get(entry.getKey());
+                break;
+            }
+        }
+
+        if (donoRestaurante != null && donoRestaurante.equals(cliente)) {
+            throw new DonoNaoPodePedidoException(); // O dono não pode fazer um pedido para sua própria empresa
+        }
+
+        // Verifica se há um pedido em aberto do mesmo cliente para o mesmo restaurante
+        List<Pedido> pedidosDoRestaurante = pedidosPorRestaurante.get(empresaId);
+        if (pedidosDoRestaurante != null) {
+            for (Pedido pedido : pedidosDoRestaurante) {
+                if (pedido.getCliente().equals(cliente.getNome()) && pedido.getEstado().equals("aberto")) {
+                    throw new PedidoEmAbertoException(); // Não é permitido ter dois pedidos abertos para a mesma empresa e cliente
+                }
+            }
+        }
+
+        // Cria um novo pedido
+        Pedido pedido = new Pedido(cliente.getNome(), restaurante.getNome()); // Alterado para passar objetos completos
+        pedidosDoRestaurante = pedidosPorRestaurante.get(empresaId);
+        if (pedidosDoRestaurante == null) {
+            pedidosDoRestaurante = new ArrayList<>();
+            pedidosPorRestaurante.put(empresaId, pedidosDoRestaurante);
+        }
+        pedidosDoRestaurante.add(pedido);
+        pedidos.put(pedido.getNumero(), pedido);
+
+        return pedido.getNumero();
+    }
+
+
 
 
 /*    public void salvarDadosEmCSV(String caminhoArquivo) throws IOException {

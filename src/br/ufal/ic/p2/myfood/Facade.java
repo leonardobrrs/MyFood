@@ -69,6 +69,10 @@ public class Facade {
         return sistema.listarProdutos(empresa);
     }
 
+    public int criarPedido(int clienteId, int empresaId) throws DonoNaoPodePedidoException, PedidoEmAbertoException{
+        return sistema.criarPedido(clienteId, empresaId);
+    }
+
 /*    public void salvarDadosEmCSV(String caminhoArquivo) throws IOException {
         sistema.salvarDadosEmCSV(caminhoArquivo);
     }*/

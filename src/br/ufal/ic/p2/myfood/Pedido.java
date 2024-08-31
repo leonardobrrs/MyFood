@@ -17,7 +17,7 @@ public class Pedido {
         this.numero = ++contador;
         this.cliente = cliente;
         this.empresa = empresa;
-        this.estado = "Em aberto";  // Estado inicial do pedido
+        this.estado = "aberto";  // Estado inicial do pedido
         this.produtos = new ArrayList<>();
         this.valor = 0;
     }
