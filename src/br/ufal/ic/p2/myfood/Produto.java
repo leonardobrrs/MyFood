@@ -31,4 +31,19 @@ public class Produto {
     public String getCategoria() {
         return categoria;
     }
+
+    public String getAtributo(String atributo) throws AtributoInvalidoException {
+        switch (atributo) {
+            case "nome":
+                return getNome();
+
+            case "valor":
+                return getValor();
+            case "categoria":
+                return getCategoria();
+            default:
+                throw new AtributoInvalidoException();
+        }
+    }
+
 }
