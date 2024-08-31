@@ -34,12 +34,12 @@ public class Sistema {
     public void criarUsuario(String nome, String email, String senha, String endereco) throws NomeInvalidoException
             , EmailInvalidoException, SenhaInvalidaException, EnderecoInvalidoException, EmailExistenteException {
 
-        if (nome == null || nome.trim().isEmpty()) throw new NomeInvalidoException("Nome invalido");
-        if (email == null || !email.contains("@")) throw new EmailInvalidoException("Email invalido");
-        if (senha == null || senha.trim().isEmpty()) throw new SenhaInvalidaException("Senha invalido");
-        if (endereco == null || endereco.trim().isEmpty())  throw new EnderecoInvalidoException("Endereco invalido");
+        if (nome == null || nome.trim().isEmpty()) throw new NomeInvalidoException();
+        if (email == null || !email.contains("@")) throw new EmailInvalidoException();
+        if (senha == null || senha.trim().isEmpty()) throw new SenhaInvalidaException();
+        if (endereco == null || endereco.trim().isEmpty())  throw new EnderecoInvalidoException();
 
-        if (usuariosPorEmail.containsKey(email)) throw new EmailExistenteException("Conta com esse email ja existe");
+        if (usuariosPorEmail.containsKey(email)) throw new EmailExistenteException();
 
         Cliente cliente = new Cliente(nome, email, senha, endereco);
         usuarios.put(cliente.getId(), cliente);
@@ -50,13 +50,13 @@ public class Sistema {
     public void criarUsuario(String nome, String email, String senha, String endereco, String cpf) throws NomeInvalidoException
             , EmailInvalidoException, SenhaInvalidaException, EnderecoInvalidoException, CpfInvalidoException, EmailExistenteException {
 
-        if (nome == null || nome.trim().isEmpty()) throw new NomeInvalidoException("Nome invalido");
-        if (email == null || !email.contains("@")) throw new EmailInvalidoException("Email invalido");
-        if (senha == null || senha.trim().isEmpty()) throw new SenhaInvalidaException("Senha invalido");
-        if (endereco == null || endereco.trim().isEmpty()) throw new EnderecoInvalidoException("Endereco invalido");
-        if (cpf == null || cpf.length() != 14) throw new CpfInvalidoException("CPF invalido");
+        if (nome == null || nome.trim().isEmpty()) throw new NomeInvalidoException();
+        if (email == null || !email.contains("@")) throw new EmailInvalidoException();
+        if (senha == null || senha.trim().isEmpty()) throw new SenhaInvalidaException();
+        if (endereco == null || endereco.trim().isEmpty()) throw new EnderecoInvalidoException();
+        if (cpf == null || cpf.length() != 14) throw new CpfInvalidoException();
 
-        if (usuariosPorEmail.containsKey(email)) throw new EmailExistenteException("Conta com esse email ja existe");
+        if (usuariosPorEmail.containsKey(email)) throw new EmailExistenteException();
 
         DonoRestaurante donoRestaurante = new DonoRestaurante(nome, email, senha, endereco, cpf);
 
@@ -70,12 +70,12 @@ public class Sistema {
                 return usuario.getId();
             }
         }
-        throw new LoginSenhaInvalidosException("Login ou senha invalidos");
+        throw new LoginSenhaInvalidosException();
     }
 
-    public String getAtributoUsuario(int id, String atributo) throws UsuarioNaoCadastradoException{
+    public String getAtributoUsuario(int id, String atributo) throws UsuarioNaoCadastradoException, AtributoInvalidoException{
         Usuario usuario = usuarios.get(id);
-        if (usuario == null) throw new UsuarioNaoCadastradoException("Usuario nao cadastrado.");
+        if (usuario == null) throw new UsuarioNaoCadastradoException();
         return usuario.getAtributo(atributo);
     }
 
@@ -84,7 +84,7 @@ public class Sistema {
         // Verificar se o usuário com o ID fornecido é um DonoRestaurante
         Usuario usuario = usuarios.get(idDono);
         if (usuario == null || !usuario.podeCriarEmpresa()) {
-            throw new UsuarioNaoAutorizadoException("Usuario nao pode criar uma empresa");
+            throw new UsuarioNaoAutorizadoException();
         }
 
         // Verificar se o dono já possui uma empresa com o mesmo nome e endereço
@@ -92,7 +92,7 @@ public class Sistema {
         if (empresasDoDono != null) {
             for (Restaurante restaurante : empresasDoDono) {
                 if (restaurante.getNome().equals(nome) && restaurante.getEndereco().equals(endereco)) {
-                    throw new EnderecoDuplicadoException("Proibido cadastrar duas empresas com o mesmo nome e local");
+                    throw new EnderecoDuplicadoException();
                 }
             }
         }
@@ -100,7 +100,7 @@ public class Sistema {
         // Verificar se existe uma empresa com o mesmo nome para qualquer dono
         for (Restaurante restaurante : restaurantes.values()) {
             if (restaurante.getNome().equals(nome) && restaurante.getEndereco().equals(endereco)) {
-                throw new NomeEmpresaExistenteException("Empresa com esse nome ja existe");
+                throw new NomeEmpresaExistenteException();
             }
         }
 
@@ -124,7 +124,7 @@ public class Sistema {
         // Verificar se o usuário com o ID fornecido é um DonoRestaurante
         Usuario usuario = usuarios.get(idDono);
         if (usuario == null || !usuario.podeCriarEmpresa()) {
-            throw new UsuarioNaoAutorizadoException("Usuario nao pode criar uma empresa");
+            throw new UsuarioNaoAutorizadoException();
         }
 
         // Obter as empresas do dono
@@ -152,10 +152,11 @@ public class Sistema {
     }
 
     // Método para retornar o ID da empresa a partir do índice
-    public int getIdEmpresa(int idDono, String nome, int indice) {
+    public int getIdEmpresa(int idDono, String nome, int indice) throws NomeInvalidoException,
+            NomeEmpresaNaoExisteException, IndiceInvalidoException, IndiceMaiorException {
         // Verifica se o nome é válido
         if (nome == null || nome.trim().isEmpty()) {
-            throw new IllegalArgumentException("Nome invalido");
+            throw new NomeInvalidoException();
         }
 
         // Obtém a lista de empresas do dono
@@ -163,12 +164,12 @@ public class Sistema {
 
         // Verifica se a lista de empresas é nula ou vazia
         if (empresas == null || empresas.isEmpty()) {
-            throw new IllegalArgumentException("Nao existe empresa com esse nome");
+            throw new NomeEmpresaNaoExisteException();
         }
 
         // Verifica se o índice é negativo
         if (indice < 0) {
-            throw new IllegalArgumentException("Indice invalido");
+            throw new IndiceInvalidoException();
         }
 
         // Cria uma lista para armazenar os IDs das empresas que correspondem ao nome fornecido
@@ -183,12 +184,12 @@ public class Sistema {
 
         // Verifica se há empresas com o nome fornecido
         if (idsCorrespondentes.isEmpty()) {
-            throw new IllegalArgumentException("Nao existe empresa com esse nome");
+            throw new NomeEmpresaNaoExisteException();
         }
 
         // Verifica se o índice é maior do que o número de empresas encontradas com o nome fornecido
         if (indice >= idsCorrespondentes.size()) {
-            throw new IllegalArgumentException("Indice maior que o esperado");
+            throw new IndiceMaiorException();
         }
 
         // Retorna o ID da empresa no índice fornecido
@@ -198,14 +199,14 @@ public class Sistema {
 
 
     // Método para retornar o valor de um atributo específico da empresa
-    public String getAtributoEmpresa(int empresaId, String atributo) {
+    public String getAtributoEmpresa(int empresaId, String atributo) throws EmpresaNaoCadastradaException, AtributoInvalidoException{
         if(atributo == null){
-            throw new IllegalArgumentException("Atributo invalido");
+            throw new AtributoInvalidoException();
         }
 
         Restaurante restaurante = restaurantes.get(empresaId);
         if (restaurante == null) {
-            throw new IllegalArgumentException("Empresa nao cadastrada");
+            throw new EmpresaNaoCadastradaException();
         }
 
         if (atributo.equals("dono")) {

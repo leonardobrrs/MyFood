@@ -1,5 +1,7 @@
 package br.ufal.ic.p2.myfood;
 
+import br.ufal.ic.p2.myfood.Exceptions.AtributoInvalidoException;
+
 public abstract class Usuario {
     private static int contadorId = 1;
     private int id;
@@ -33,7 +35,7 @@ public abstract class Usuario {
 
     public String getEndereco() { return endereco; }
 
-    public String getAtributo(String atributo) {
+    public String getAtributo(String atributo) throws AtributoInvalidoException {
         switch (atributo) {
             case "nome":
                 return getNome();
@@ -44,7 +46,7 @@ public abstract class Usuario {
             case "endereco":
                 return getEndereco();
             default:
-                throw new IllegalArgumentException("Atributo nao encontrado.");
+                throw new AtributoInvalidoException();
         }
     }
 
