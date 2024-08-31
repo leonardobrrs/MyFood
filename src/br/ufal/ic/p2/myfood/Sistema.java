@@ -15,12 +15,16 @@ public class Sistema {
     private Map<String, Usuario> usuariosPorEmail;
     private Map<Integer, Restaurante> restaurantes;
     private Map<Integer, List<Restaurante>> restaurantesPorDono;
+    private Map<Integer, Produto> produtos;
+    private Map<Integer, List<Produto>> produtosPorRestaurante;
 
     public Sistema() {
         this.usuarios = new HashMap<>();
         this.usuariosPorEmail = new HashMap<>();
         this.restaurantes = new HashMap<>();
         this.restaurantesPorDono = new HashMap<>();
+        this.produtos = new HashMap<>();
+        this.produtosPorRestaurante = new HashMap<>();
     }
 
     public void zerarSistema(){
@@ -28,6 +32,8 @@ public class Sistema {
         this.usuariosPorEmail.clear();
         this.restaurantes.clear();
         this.restaurantesPorDono.clear();
+        this.produtos.clear();
+        this.produtosPorRestaurante.clear();
     }
 
     ///Criando o usuario cliente
@@ -223,6 +229,41 @@ public class Sistema {
         }
 
         return restaurante.getAtributo(atributo);
+    }
+
+    public int criarProduto(int empresa, String nome, float valor, String categoria) throws NomeProdutoExisteException, NomeInvalidoException, ValorInvalidoException, CategoriaInvalidaException{
+
+        if (nome == null || nome.trim().isEmpty()) throw new NomeInvalidoException();
+        if (categoria == null || categoria.trim().isEmpty()) throw new CategoriaInvalidaException();
+        if (valor <= 0) throw new ValorInvalidoException();
+
+        List<Produto> produtosDoRestaurante = produtosPorRestaurante.get(empresa);
+        if (produtosDoRestaurante != null) {
+            for (Produto produto : produtosDoRestaurante) {
+                if (produto.getNome().equals(nome)) {
+                    throw new NomeProdutoExisteException();
+                }
+            }
+        }
+
+
+        Produto produto = new Produto(nome, valor, categoria);
+
+        // Adicionar o restaurante à lista do dono
+        produtosDoRestaurante = produtosPorRestaurante.get(empresa);
+        if (produtosDoRestaurante == null) {
+            produtosDoRestaurante = new ArrayList<>();
+            produtosPorRestaurante.put(empresa, produtosDoRestaurante);
+        }
+
+        produtosDoRestaurante.add(produto);
+
+        return produto.getId();
+    }
+
+    public void editarProduto(int produto, String nome, float valor, String categoria){
+
+
     }
 
 /*    public void salvarDadosEmCSV(String caminhoArquivo) throws IOException {

@@ -36,9 +36,6 @@ public class Produto {
         switch (atributo) {
             case "nome":
                 return getNome();
-
-            case "valor":
-                return getValor();
             case "categoria":
                 return getCategoria();
             default:

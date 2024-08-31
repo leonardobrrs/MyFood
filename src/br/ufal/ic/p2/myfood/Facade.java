@@ -4,6 +4,7 @@ import br.ufal.ic.p2.myfood.Exceptions.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +52,11 @@ public class Facade {
 
     public String getAtributoEmpresa(int empresaId, String atributo) throws EmpresaNaoCadastradaException, AtributoInvalidoException {
         return sistema.getAtributoEmpresa(empresaId, atributo);
+    }
+
+    public int criarProduto(int empresa, String nome, float valor, String categoria) throws NomeProdutoExisteException, NomeInvalidoException, ValorInvalidoException, CategoriaInvalidaException{
+
+        return sistema.criarProduto(empresa, nome, valor, categoria);
     }
 
 /*    public void salvarDadosEmCSV(String caminhoArquivo) throws IOException {
