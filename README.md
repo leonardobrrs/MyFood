@@ -1,4 +1,5 @@
 # MyFood
 Repositório para o Projeto da disciplina de P2.
 
-O projeto 
+Leonardo Barbosa Barros
+José Herberty de Oliveira Freire
