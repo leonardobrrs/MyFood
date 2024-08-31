@@ -256,6 +256,7 @@ public class Sistema {
         }
 
         produtosDoRestaurante.add(produto);
+        produtos.put(produto.getId(), produto);
 
         return produto.getId();
     }
@@ -265,19 +266,43 @@ public class Sistema {
 
         Produto produto1 = produtos.get(produto);
 
-        if (produto1 == null) {
-            throw new ProdutoNaoCadastradoException();
-        }
-
         if (nome == null || nome.trim().isEmpty()) throw new NomeInvalidoException();
         if (categoria == null || categoria.trim().isEmpty()) throw new CategoriaInvalidaException();
         if (valor <= 0) throw new ValorInvalidoException();
+
+        if (produto1 == null) {
+            throw new ProdutoNaoCadastradoException();
+        }
 
         produto1.setNome(nome);
         produto1.setValor(valor);
         produto1.setCategoria(categoria);
 
     }
+
+    public String getProduto(String nome, int empresa, String atributo) throws AtributoNaoExisteException, ProdutoNaoEncontrado {
+        if (atributo == null) {
+            throw new AtributoNaoExisteException();
+        }
+
+        List<Produto> produtosDoRestaurante = produtosPorRestaurante.get(empresa);
+        if (produtosDoRestaurante == null) {
+            throw new ProdutoNaoEncontrado();
+        }
+
+        // Procurar o produto pelo nome dentro da lista de produtos do restaurante
+        for (Produto produto : produtosDoRestaurante) {
+            if(atributo.equals("valor")){
+                return String.format("%.2f",produto.getValor());
+            }
+            if (produto.getNome().equals(nome)) {
+                return produto.getAtributo(atributo);
+            }
+        }
+
+        throw new ProdutoNaoEncontrado(); // Produto com o nome especificado não encontrado
+    }
+
 
 /*    public void salvarDadosEmCSV(String caminhoArquivo) throws IOException {
         try (FileWriter writer = new FileWriter(caminhoArquivo)) {

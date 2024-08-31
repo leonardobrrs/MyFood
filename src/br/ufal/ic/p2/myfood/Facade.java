@@ -56,7 +56,14 @@ public class Facade {
     }
 
     public void editarProduto(int produto, String nome, float valor, String categoria) throws NomeInvalidoException,
-    CategoriaInvalidaException, ValorInvalidoException, ProdutoNaoCadastradoException {}
+    CategoriaInvalidaException, ValorInvalidoException, ProdutoNaoCadastradoException {
+        sistema.editarProduto(produto, nome, valor, categoria);
+    }
+
+    public String getProduto(String nome, int empresa, String atributo) throws AtributoNaoExisteException,
+            ProdutoNaoEncontrado{
+        return sistema.getProduto(nome, empresa, atributo);
+    }
 
 /*    public void salvarDadosEmCSV(String caminhoArquivo) throws IOException {
         sistema.salvarDadosEmCSV(caminhoArquivo);
