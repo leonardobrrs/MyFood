@@ -7,7 +7,8 @@ public class Main {
                 "testes/us1_1.txt",
                 "testes/us1_2.txt",
                 "testes/us2_1.txt",
-                "testes/us2_2.txt"
+                "testes/us2_2.txt",
+                "testes/us3_1.txt"
         };
         EasyAccept.main(args);
     }
