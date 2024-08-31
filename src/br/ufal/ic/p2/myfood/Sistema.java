@@ -34,7 +34,7 @@ public class Sistema {
     public void criarUsuario(String nome, String email, String senha, String endereco) throws NomeInvalidoException
             , EmailInvalidoException, SenhaInvalidaException, EnderecoInvalidoException, EmailExistenteException {
 
-        if (nome == null || nome.trim().isEmpty()) throw new NomeInvalidoException("Nome invalido");
+        if (nome == null || nome.trim().isEmpty()) throw new NomeInvalidoException();
         if (email == null || !email.contains("@")) throw new EmailInvalidoException("Email invalido");
         if (senha == null || senha.trim().isEmpty()) throw new SenhaInvalidaException("Senha invalido");
         if (endereco == null || endereco.trim().isEmpty())  throw new EnderecoInvalidoException("Endereco invalido");
@@ -50,7 +50,7 @@ public class Sistema {
     public void criarUsuario(String nome, String email, String senha, String endereco, String cpf) throws NomeInvalidoException
             , EmailInvalidoException, SenhaInvalidaException, EnderecoInvalidoException, CpfInvalidoException, EmailExistenteException {
 
-        if (nome == null || nome.trim().isEmpty()) throw new NomeInvalidoException("Nome invalido");
+        if (nome == null || nome.trim().isEmpty()) throw new NomeInvalidoException();
         if (email == null || !email.contains("@")) throw new EmailInvalidoException("Email invalido");
         if (senha == null || senha.trim().isEmpty()) throw new SenhaInvalidaException("Senha invalido");
         if (endereco == null || endereco.trim().isEmpty()) throw new EnderecoInvalidoException("Endereco invalido");
@@ -152,10 +152,10 @@ public class Sistema {
     }
 
     // Método para retornar o ID da empresa a partir do índice
-    public int getIdEmpresa(int idDono, String nome, int indice) {
+    public int getIdEmpresa(int idDono, String nome, int indice) throws NomeInvalidoException {
         // Verifica se o nome é válido
         if (nome == null || nome.trim().isEmpty()) {
-            throw new IllegalArgumentException("Nome invalido");
+            throw new NomeInvalidoException();
         }
 
         // Obtém a lista de empresas do dono

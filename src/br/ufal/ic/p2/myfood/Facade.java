@@ -44,7 +44,7 @@ public class Facade {
         return sistema.getEmpresasDoUsuario(idDono);
     }
 
-    public int getIdEmpresa(int idDono, String nome, int indice) {
+    public int getIdEmpresa(int idDono, String nome, int indice) throws NomeInvalidoException{
         return sistema.getIdEmpresa(idDono, nome, indice);
     }
 
