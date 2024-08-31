@@ -32,7 +32,7 @@ public class Facade {
         return sistema.login(email, senha);
     }
 
-    public String getAtributoUsuario(int id, String atributo) throws UsuarioNaoCadastradoException{
+    public String getAtributoUsuario(int id, String atributo) throws UsuarioNaoCadastradoException, AtributoInvalidoException{
         return sistema.getAtributoUsuario(id, atributo);
     }
 
@@ -44,11 +44,12 @@ public class Facade {
         return sistema.getEmpresasDoUsuario(idDono);
     }
 
-    public int getIdEmpresa(int idDono, String nome, int indice) throws NomeInvalidoException{
+    public int getIdEmpresa(int idDono, String nome, int indice)  throws NomeInvalidoException,
+            NomeEmpresaNaoExisteException, IndiceInvalidoException, IndiceMaiorException{
         return sistema.getIdEmpresa(idDono, nome, indice);
     }
 
-    public String getAtributoEmpresa(int empresaId, String atributo) {
+    public String getAtributoEmpresa(int empresaId, String atributo) throws EmpresaNaoCadastradaException, AtributoInvalidoException {
         return sistema.getAtributoEmpresa(empresaId, atributo);
     }
 

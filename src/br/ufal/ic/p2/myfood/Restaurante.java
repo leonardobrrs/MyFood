@@ -1,5 +1,7 @@
 package br.ufal.ic.p2.myfood;
 
+import br.ufal.ic.p2.myfood.Exceptions.AtributoInvalidoException;
+
 public class Restaurante {
     private static int contadorId = 1;
     private int id;
@@ -26,7 +28,7 @@ public class Restaurante {
 
     public String getTipoCozinha() { return tipoCozinha; }
 
-    public String getAtributo(String atributo) {
+    public String getAtributo(String atributo) throws AtributoInvalidoException {
         switch (atributo) {
             case "nome":
                 return getNome();
@@ -35,7 +37,7 @@ public class Restaurante {
             case "tipoCozinha":
                 return getTipoCozinha();
             default:
-                throw new IllegalArgumentException("Atributo invalido");
+                throw new AtributoInvalidoException();
         }
     }
 

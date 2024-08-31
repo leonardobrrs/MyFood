@@ -1,5 +1,7 @@
 package br.ufal.ic.p2.myfood;
 
+import br.ufal.ic.p2.myfood.Exceptions.AtributoInvalidoException;
+
 public class DonoRestaurante extends Usuario{
     private String cpf;
 
@@ -11,7 +13,7 @@ public class DonoRestaurante extends Usuario{
     public String getCpf() { return cpf; }
 
     @Override
-    public String getAtributo(String atributo) {
+    public String getAtributo(String atributo) throws AtributoInvalidoException {
         if ("cpf".equalsIgnoreCase(atributo)) {
             return getCpf();
         }
