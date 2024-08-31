@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Sistema {
 
@@ -292,15 +293,49 @@ public class Sistema {
 
         // Procurar o produto pelo nome dentro da lista de produtos do restaurante
         for (Produto produto : produtosDoRestaurante) {
-            if(atributo.equals("valor")){
-                return String.format("%.2f",produto.getValor());
-            }
             if (produto.getNome().equals(nome)) {
-                return produto.getAtributo(atributo);
+                if (atributo.equals("valor")) {
+                    return String.format(Locale.US, "%.2f", produto.getValor());
+                } else if (atributo.equals("empresa")) {
+                    Restaurante restaurante = restaurantes.get(empresa);
+                    if (restaurante != null) {
+                        return restaurante.getNome();
+                    } else {
+                        throw new ProdutoNaoEncontrado(); // Se o restaurante não for encontrado
+                    }
+                } else {
+                    return produto.getAtributo(atributo);
+                }
             }
         }
 
         throw new ProdutoNaoEncontrado(); // Produto com o nome especificado não encontrado
+    }
+
+    public String listarProdutos(int empresa)throws EmpresaNaoEncontradaException{
+
+        Restaurante restaurante = restaurantes.get(empresa);
+        if (restaurante == null) {
+            throw new EmpresaNaoEncontradaException(); // Lançar exceção se a empresa não for encontrada
+        }
+        // Obter as empresas do dono
+        List<Produto> produtoDoRestaurante = produtosPorRestaurante.get(empresa);
+        if (produtoDoRestaurante == null || produtoDoRestaurante.isEmpty()) {
+            return "{[]}"; //
+        }
+
+        // Construir a string com o formato desejado
+        StringBuilder resultado = new StringBuilder("{[");
+        for (int i = 0; i < produtoDoRestaurante.size(); i++) {
+            Produto produto = produtoDoRestaurante.get(i);
+            if (i > 0) {
+                resultado.append(", ");
+            }
+            resultado.append(produto.getNome());
+        }
+        resultado.append("]}");
+
+        return resultado.toString();
     }
 
 

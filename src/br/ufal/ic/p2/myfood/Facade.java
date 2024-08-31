@@ -65,6 +65,10 @@ public class Facade {
         return sistema.getProduto(nome, empresa, atributo);
     }
 
+    public String listarProdutos(int empresa) throws EmpresaNaoEncontradaException{
+        return sistema.listarProdutos(empresa);
+    }
+
 /*    public void salvarDadosEmCSV(String caminhoArquivo) throws IOException {
         sistema.salvarDadosEmCSV(caminhoArquivo);
     }*/
