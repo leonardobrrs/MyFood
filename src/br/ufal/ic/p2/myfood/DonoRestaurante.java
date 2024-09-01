@@ -17,7 +17,7 @@ public class DonoRestaurante extends Usuario{
         if ("cpf".equalsIgnoreCase(atributo)) {
             return getCpf();
         }
-        return super.getAtributo(atributo);  // Chamando o método da classe pai
+        return super.getAtributo(atributo);
     }
 
     @Override

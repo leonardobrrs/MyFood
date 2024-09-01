@@ -160,7 +160,6 @@ public class Sistema {
         return resultado.toString();
     }
 
-    // Método para retornar o ID da empresa a partir do índice
     public int getIdEmpresa(int idDono, String nome, int indice) throws NomeInvalidoException,
             NomeEmpresaNaoExisteException, IndiceInvalidoException, IndiceMaiorException {
         // Verifica se o nome é válido
@@ -181,33 +180,25 @@ public class Sistema {
             throw new IndiceInvalidoException();
         }
 
-        // Cria uma lista para armazenar os IDs das empresas que correspondem ao nome fornecido
         List<Integer> idsCorrespondentes = new ArrayList<>();
 
-        // Itera sobre a lista de empresas para encontrar todas as empresas com o nome fornecido
         for (Restaurante restaurante : empresas) {
             if (restaurante.getNome().equals(nome)) {
                 idsCorrespondentes.add(restaurante.getId());
             }
         }
 
-        // Verifica se há empresas com o nome fornecido
         if (idsCorrespondentes.isEmpty()) {
             throw new NomeEmpresaNaoExisteException();
         }
 
-        // Verifica se o índice é maior do que o número de empresas encontradas com o nome fornecido
         if (indice >= idsCorrespondentes.size()) {
             throw new IndiceMaiorException();
         }
 
-        // Retorna o ID da empresa no índice fornecido
         return idsCorrespondentes.get(indice);
     }
 
-
-
-    // Método para retornar o valor de um atributo específico da empresa
     public String getAtributoEmpresa(int empresaId, String atributo) throws EmpresaNaoCadastradaException, AtributoInvalidoException{
         if(atributo == null){
             throw new AtributoInvalidoException();
@@ -219,12 +210,10 @@ public class Sistema {
         }
 
         if (atributo.equals("dono")) {
-            // Itera sobre o mapa de donos e verifica quem possui esse restaurante
             for (Map.Entry<Integer, List<Restaurante>> entry : restaurantesPorDono.entrySet()) {
                 List<Restaurante> restaurantesDoDono = entry.getValue();
                 for (Restaurante r : restaurantesDoDono) {
                     if (r.getId() == empresaId) {
-                        // Retorna o nome do dono
                         return usuarios.get(entry.getKey()).getNome();
                     }
                 }
@@ -251,7 +240,6 @@ public class Sistema {
 
         Produto produto = new Produto(nome, valor, categoria);
 
-        // Adicionar o restaurante à lista do dono
         produtosDoRestaurante = produtosPorRestaurante.get(empresa);
         if (produtosDoRestaurante == null) {
             produtosDoRestaurante = new ArrayList<>();
@@ -293,7 +281,6 @@ public class Sistema {
             throw new ProdutoNaoEncontradoException();
         }
 
-        // Procurar o produto pelo nome dentro da lista de produtos do restaurante
         for (Produto produto : produtosDoRestaurante) {
             if (produto.getNome().equals(nome)) {
                 if (atributo.equals("valor")) {
@@ -303,7 +290,7 @@ public class Sistema {
                     if (restaurante != null) {
                         return restaurante.getNome();
                     } else {
-                        throw new ProdutoNaoEncontradoException(); // Se o restaurante não for encontrado
+                        throw new ProdutoNaoEncontradoException();
                     }
                 } else {
                     return produto.getAtributo(atributo);
@@ -311,22 +298,21 @@ public class Sistema {
             }
         }
 
-        throw new ProdutoNaoEncontradoException(); // Produto com o nome especificado não encontrado
+        throw new ProdutoNaoEncontradoException();
     }
 
     public String listarProdutos(int empresa)throws EmpresaNaoEncontradaException{
 
         Restaurante restaurante = restaurantes.get(empresa);
         if (restaurante == null) {
-            throw new EmpresaNaoEncontradaException(); // Lançar exceção se a empresa não for encontrada
+            throw new EmpresaNaoEncontradaException();
         }
-        // Obter as empresas do dono
+
         List<Produto> produtoDoRestaurante = produtosPorRestaurante.get(empresa);
         if (produtoDoRestaurante == null || produtoDoRestaurante.isEmpty()) {
             return "{[]}"; //
         }
 
-        // Construir a string com o formato desejado
         StringBuilder resultado = new StringBuilder("{[");
         for (int i = 0; i < produtoDoRestaurante.size(); i++) {
             Produto produto = produtoDoRestaurante.get(i);
@@ -344,12 +330,10 @@ public class Sistema {
         Usuario cliente = usuarios.get(clienteId);
         Restaurante restaurante = restaurantes.get(empresaId);
 
-        // Verifica se o cliente e o restaurante existem
         if (cliente == null || restaurante == null) {
-            throw new DonoNaoPodePedidoException(); // Ou uma exceção mais específica
+            throw new DonoNaoPodePedidoException();
         }
 
-        // Verifica se o cliente é o dono do restaurante
         Usuario donoRestaurante = null;
         for (Map.Entry<Integer, List<Restaurante>> entry : restaurantesPorDono.entrySet()) {
             if (entry.getValue().contains(restaurante)) {
@@ -359,21 +343,19 @@ public class Sistema {
         }
 
         if (donoRestaurante != null && donoRestaurante.equals(cliente)) {
-            throw new DonoNaoPodePedidoException(); // O dono não pode fazer um pedido para sua própria empresa
+            throw new DonoNaoPodePedidoException();
         }
 
-        // Verifica se há um pedido em aberto do mesmo cliente para o mesmo restaurante
         List<Pedido> pedidosDoRestaurante = pedidosPorRestaurante.get(empresaId);
         if (pedidosDoRestaurante != null) {
             for (Pedido pedido : pedidosDoRestaurante) {
                 if (pedido.getCliente().equals(cliente.getNome()) && pedido.getEstado().equals("aberto")) {
-                    throw new PedidoEmAbertoException(); // Não é permitido ter dois pedidos abertos para a mesma empresa e cliente
+                    throw new PedidoEmAbertoException();
                 }
             }
         }
 
-        // Cria um novo pedido
-        Pedido pedido = new Pedido(cliente.getNome(), restaurante.getNome()); // Alterado para passar objetos completos
+        Pedido pedido = new Pedido(cliente.getNome(), restaurante.getNome());
         pedidosDoRestaurante = pedidosPorRestaurante.get(empresaId);
         if (pedidosDoRestaurante == null) {
             pedidosDoRestaurante = new ArrayList<>();
@@ -400,11 +382,9 @@ public class Sistema {
             throw new ProdutoNaoEncontradoException();
         }
 
-        // Verifica se o produto pertence à empresa do pedido
         String nomeEmpresaPedido = pedido.getEmpresa();
         Restaurante restaurante = null;
 
-        // Encontrar o restaurante com base no nome
         for (Restaurante r : restaurantes.values()) {
             if (r.getNome().equals(nomeEmpresaPedido)) {
                 restaurante = r;
@@ -416,7 +396,6 @@ public class Sistema {
             throw new EmpresaNaoEncontradaException();
         }
 
-        // Verifica se o produto pertence ao restaurante
         List<Produto> produtosDoRestaurante = produtosPorRestaurante.get(restaurante.getId());
         if (produtosDoRestaurante == null || !produtosDoRestaurante.contains(produto)) {
             throw new ProdutoNaoPertenceEmpresaException();
@@ -474,7 +453,6 @@ public class Sistema {
             throw new PedidoNaoEncontradoException();
         }
 
-        // Altera o estado do pedido para "fechado"
         pedido.finalizarPedido();
     }
 
