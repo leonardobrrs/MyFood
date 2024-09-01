@@ -1,6 +1,10 @@
 package br.ufal.ic.p2.myfood;
 
 import br.ufal.ic.p2.myfood.Exceptions.*;
+import br.ufal.ic.p2.myfood.services.FuncoesXML.PedidoXML;
+import br.ufal.ic.p2.myfood.services.FuncoesXML.ProdutoXML;
+import br.ufal.ic.p2.myfood.services.FuncoesXML.RestauranteXML;
+import br.ufal.ic.p2.myfood.services.FuncoesXML.UsuarioXML;
 
 import java.util.*;
 import java.io.IOException;
@@ -18,13 +22,13 @@ public class Sistema {
 
     public Sistema() {
         this.usuarios = new HashMap<>();
-        this.usuariosPorEmail = new HashMap<>();
-        this.restaurantes = new HashMap<>();
+        this.usuariosPorEmail = UsuarioXML.load();
+        this.restaurantes = RestauranteXML.load();
         this.restaurantesPorDono = new HashMap<>();
         this.produtos = new HashMap<>();
-        this.produtosPorRestaurante = new HashMap<>();
+        this.produtosPorRestaurante = ProdutoXML.load();
         this.pedidos = new HashMap<>();
-        this.pedidosPorRestaurante = new HashMap<>();
+        this.pedidosPorRestaurante = PedidoXML.load();
     }
 
     public void zerarSistema(){
@@ -516,11 +520,10 @@ public class Sistema {
         return pedido.getNumero();
     }
 
-
-
-
-
-
     public void encerrarSistema(){
+        UsuarioXML.save(usuariosPorEmail);
+        RestauranteXML.save(restaurantes);
+        ProdutoXML.save(produtosPorRestaurante);
+        PedidoXML.save(pedidosPorRestaurante);
     }
 }
