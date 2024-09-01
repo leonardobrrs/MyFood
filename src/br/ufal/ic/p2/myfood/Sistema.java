@@ -2,12 +2,8 @@ package br.ufal.ic.p2.myfood;
 
 import br.ufal.ic.p2.myfood.Exceptions.*;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Locale;
 
 public class Sistema {
 
@@ -388,10 +384,14 @@ public class Sistema {
         return pedido.getNumero();
     }
 
-    public void adicionarProduto(int numeroPedido, int idProduto) throws ProdutoNaoEncontradoException, EmpresaNaoEncontradaException, ProdutoNaoPertenceEmpresaException, PedidoNaoEncontradoException {
+    public void adicionarProduto(int numeroPedido, int idProduto) throws ProdutoNaoEncontradoException,
+            EmpresaNaoEncontradaException, ProdutoNaoPertenceEmpresaException, NaoExistePedidoAbertoException, PedidoFechadoException {
         Pedido pedido = pedidos.get(numeroPedido);
         if (pedido == null) {
-            throw new PedidoNaoEncontradoException();
+            throw new NaoExistePedidoAbertoException();
+        }
+        if(pedido.getEstado().equals("preparando")){
+            throw new PedidoFechadoException();
         }
 
         Produto produto = produtos.get(idProduto);
@@ -425,12 +425,12 @@ public class Sistema {
     }
 
 
-    public String getPedidos(int numeroPedido, String atributo) throws PedidoNaoEncontradoException,
+    public String getPedidos(int numeroPedido, String atributo) throws NaoExistePedidoAbertoException,
             AtributoInvalidoException, AtributoNaoExisteException {
         Pedido pedido = pedidos.get(numeroPedido);
 
         if (pedido == null) {
-            throw new PedidoNaoEncontradoException();
+            throw new NaoExistePedidoAbertoException();
         }
 
         if (atributo == null || atributo.trim().isEmpty()) {
@@ -447,7 +447,7 @@ public class Sistema {
             case "valor":
                 return String.format(Locale.US, "%.2f", pedido.getValor());
             case "produtos":
-                List<Produto> produtos = pedido.getProdutos(); // Assumindo que o Pedido possui um método getProdutos()
+                List<Produto> produtos = pedido.getProdutos();
                 if (produtos == null || produtos.isEmpty()) {
                     return "{[]}"; // Nenhum produto encontrado
                 }
@@ -465,6 +465,61 @@ public class Sistema {
                 throw new AtributoNaoExisteException();
         }
     }
+
+    public void fecharPedido(int numeroPedido) throws PedidoNaoEncontradoException {
+        Pedido pedido = pedidos.get(numeroPedido);
+
+        if (pedido == null) {
+            throw new PedidoNaoEncontradoException();
+        }
+
+        // Altera o estado do pedido para "fechado"
+        pedido.finalizarPedido();
+    }
+
+    public void removerProduto(int numeroPedido, String nomeProduto) throws PedidoNaoEncontradoException,
+            ProdutoNaoEncontradoException, RemoverProdutoPedidoFechadoException, ProdutoInvalidoException {
+
+        if (nomeProduto == null || nomeProduto.trim().isEmpty()) {
+            throw new ProdutoInvalidoException();
+        }
+        Pedido pedido = pedidos.get(numeroPedido);
+
+        if (pedido == null) {
+            throw new PedidoNaoEncontradoException();
+        }
+
+        if(pedido.getEstado().equals("preparando")){
+            throw new RemoverProdutoPedidoFechadoException();
+        }
+
+        boolean produtoRemovido = pedido.removerProdutoPorNome(nomeProduto);
+
+        if (!produtoRemovido) {
+            throw new ProdutoNaoEncontradoException();
+        }
+    }
+
+    public int getNumeroPedido(int clienteId, int empresaId, int indice) {
+        List<Pedido> pedidosDoRestaurante = pedidosPorRestaurante.get(empresaId);
+        Usuario cliente = usuarios.get(clienteId);
+
+        if (cliente == null || pedidosDoRestaurante == null) {
+            throw new IllegalArgumentException();
+        }
+
+        if (indice < 0 || indice >= pedidosDoRestaurante.size()) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        Pedido pedido = pedidosDoRestaurante.get(indice);
+        return pedido.getNumero();
+    }
+
+
+
+
+
 
     public void encerrarSistema(){
     }

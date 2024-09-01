@@ -73,14 +73,27 @@ public class Facade {
         return sistema.criarPedido(clienteId, empresaId);
     }
 
-    public void adicionarProduto(int numero, int produto) throws PedidoNaoEncontradoException,
-            ProdutoNaoEncontradoException, ProdutoNaoPertenceEmpresaException, EmpresaNaoEncontradaException {
+    public void adicionarProduto(int numero, int produto) throws NaoExistePedidoAbertoException,
+            ProdutoNaoEncontradoException, ProdutoNaoPertenceEmpresaException, EmpresaNaoEncontradaException, PedidoFechadoException {
         sistema.adicionarProduto(numero, produto);
     }
 
-    public String getPedidos(int numeroPedido, String atributo) throws PedidoNaoEncontradoException,
+    public String getPedidos(int numeroPedido, String atributo) throws NaoExistePedidoAbertoException,
             AtributoInvalidoException, AtributoNaoExisteException {
         return sistema.getPedidos(numeroPedido, atributo);
+    }
+
+    public void fecharPedido(int numeroPedido) throws PedidoNaoEncontradoException{
+        sistema.fecharPedido(numeroPedido);
+    }
+
+    public void removerProduto(int numeroPedido, String nomeProduto) throws PedidoNaoEncontradoException,
+            ProdutoNaoEncontradoException, ProdutoInvalidoException, RemoverProdutoPedidoFechadoException{
+        sistema.removerProduto(numeroPedido, nomeProduto);
+    }
+
+    public int getNumeroPedido(int clienteId, int empresaId, int indice){
+        return sistema.getNumeroPedido(clienteId, empresaId, indice);
     }
 
     public void encerrarSistema(){

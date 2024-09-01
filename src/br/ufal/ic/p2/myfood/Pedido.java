@@ -1,5 +1,6 @@
 package br.ufal.ic.p2.myfood;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -51,12 +52,20 @@ public class Pedido {
         valor += produto.getValor(); // Atualiza o valor total do pedido
     }
 
-
     public void finalizarPedido() {
-        this.estado = "Finalizado";
+        this.estado = "preparando";
     }
 
-    public void cancelarPedido() {
-        this.estado = "Cancelado";
+    public boolean removerProdutoPorNome(String nomeProduto) {
+        for (Iterator<Produto> it = produtos.iterator(); ((Iterator<?>) it).hasNext(); ) {
+            Produto produto = it.next();
+            if (produto.getNome().equals(nomeProduto)) {
+                it.remove();
+                valor -= produto.getValor();
+                return true;
+            }
+        }
+        return false;
     }
+
 }
