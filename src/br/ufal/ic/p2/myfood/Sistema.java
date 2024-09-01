@@ -520,10 +520,23 @@ public class Sistema {
         return pedido.getNumero();
     }
 
+    /*    public void salvarDadosEmCSV(String caminhoArquivo) throws IOException {
+        try (FileWriter writer = new FileWriter(caminhoArquivo)) {
+            for (Map.Entry<Integer, Usuario> entry : usuarios.entrySet()) {
+                Integer id = entry.getKey();
+                Usuario usuario = entry.getValue();
+                String linha = id + "," + usuario.getNome() + "," + usuario.getEmail() + "\n";
+                writer.write(linha);
+            }
+        }
+    }*/
+
     public void encerrarSistema(){
         UsuarioXML.save(usuariosPorEmail);
         RestauranteXML.save(restaurantes);
         ProdutoXML.save(produtosPorRestaurante);
         PedidoXML.save(pedidosPorRestaurante);
+
+        //        salvarDadosEmCSV("usuarios.csv");
     }
 }
