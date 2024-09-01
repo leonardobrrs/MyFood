@@ -38,5 +38,5 @@ O sistema é projetado para ser eficiente e intuitivo, simplificando a gestão d
 ## Tecnologias Utilizadas
 
 - Java
-- XML para persistência de dados
+- Serialização para persistência de dados
 - Orientação a Objetos
