@@ -1,10 +1,13 @@
 package br.ufal.ic.p2.myfood;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Pedido {
+public class Pedido implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private static int contador = 0;
 
     private int numero;

@@ -3,7 +3,12 @@ package br.ufal.ic.p2.myfood;
 import br.ufal.ic.p2.myfood.Exceptions.AtributoNaoExisteException;
 import br.ufal.ic.p2.myfood.Exceptions.ProdutoNaoEncontradoException;
 
-public class Produto {
+import java.io.Serializable;
+
+public class Produto implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+
     private static int idCounter = 0; // Gerador de ID automático
     private int id;
     private String nome;

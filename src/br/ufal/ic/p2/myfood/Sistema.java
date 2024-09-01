@@ -1,10 +1,7 @@
 package br.ufal.ic.p2.myfood;
 
 import br.ufal.ic.p2.myfood.Exceptions.*;
-import br.ufal.ic.p2.myfood.services.FuncoesXML.PedidoXML;
-import br.ufal.ic.p2.myfood.services.FuncoesXML.ProdutoXML;
-import br.ufal.ic.p2.myfood.services.FuncoesXML.RestauranteXML;
-import br.ufal.ic.p2.myfood.services.FuncoesXML.UsuarioXML;
+import br.ufal.ic.p2.myfood.services.*;
 
 import java.util.*;
 import java.io.IOException;
@@ -20,15 +17,15 @@ public class Sistema {
     private Map<Integer, Pedido> pedidos;
     private Map<Integer, List<Pedido>> pedidosPorRestaurante;
 
-    public Sistema() {
-        this.usuarios = new HashMap<>();
-        this.usuariosPorEmail = UsuarioXML.load();
-        this.restaurantes = RestauranteXML.load();
-        this.restaurantesPorDono = new HashMap<>();
-        this.produtos = new HashMap<>();
-        this.produtosPorRestaurante = ProdutoXML.load();
-        this.pedidos = new HashMap<>();
-        this.pedidosPorRestaurante = PedidoXML.load();
+    public Sistema() throws IOException, ClassNotFoundException {
+        this.usuarios = UsuarioSave.carregarUsuarios();
+        this.usuariosPorEmail = new HashMap<>();
+        this.restaurantes = RestauranteSave.carregarRestaurantes();
+        this.restaurantesPorDono = RestaurantePorDonoSave.carregarRestaurantesPorDono();
+        this.produtos = ProdutoSave.carregarProdutos();
+        this.produtosPorRestaurante = ProdutoPorRestauranteSave.carregarProdutoPorRestaurante();
+        this.pedidos = PedidoSave.carregarPedidos();
+        this.pedidosPorRestaurante = PedidoPorRestauranteSave.carregarPedidosPorRestaurante();
     }
 
     public void zerarSistema(){
@@ -40,6 +37,7 @@ public class Sistema {
         this.produtosPorRestaurante.clear();
         this.pedidos.clear();
         this.pedidosPorRestaurante.clear();
+
     }
 
     ///Criando o usuario cliente
@@ -145,7 +143,6 @@ public class Sistema {
             return "{[]}"; // Nenhuma empresa encontrada
         }
 
-        // Construir a string com o formato desejado
         StringBuilder resultado = new StringBuilder("{[");
         for (int i = 0; i < empresasDoDono.size(); i++) {
             Restaurante restaurante = empresasDoDono.get(i);
@@ -520,23 +517,14 @@ public class Sistema {
         return pedido.getNumero();
     }
 
-    /*    public void salvarDadosEmCSV(String caminhoArquivo) throws IOException {
-        try (FileWriter writer = new FileWriter(caminhoArquivo)) {
-            for (Map.Entry<Integer, Usuario> entry : usuarios.entrySet()) {
-                Integer id = entry.getKey();
-                Usuario usuario = entry.getValue();
-                String linha = id + "," + usuario.getNome() + "," + usuario.getEmail() + "\n";
-                writer.write(linha);
-            }
-        }
-    }*/
 
-    public void encerrarSistema(){
-        UsuarioXML.save(usuariosPorEmail);
-        RestauranteXML.save(restaurantes);
-        ProdutoXML.save(produtosPorRestaurante);
-        PedidoXML.save(pedidosPorRestaurante);
-
-        //        salvarDadosEmCSV("usuarios.csv");
+    public void encerrarSistema() throws IOException {
+        UsuarioSave.salvarUsuarios(usuarios);
+        RestaurantePorDonoSave.salvarRestaurantesPorDono(restaurantesPorDono);
+        RestauranteSave.salvarRestaurantes(restaurantes);
+        ProdutoPorRestauranteSave.salvarProdutoPorRestaurante(produtosPorRestaurante);
+        ProdutoSave.salvarProdutos(produtos);
+        PedidoSave.salvarPedidos(pedidos);
+        PedidoPorRestauranteSave.salvarPedidosPorRestaurante(pedidosPorRestaurante);
     }
 }

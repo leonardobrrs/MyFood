@@ -27,3 +27,10 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+/usuarios.dat
+/restaurantesPorDono.dat
+/restaurantes.dat
+/produtos.dat
+/produtoPorRestaurante.dat
+/pedidorPorRestaurante.dat
+/pedido.dat

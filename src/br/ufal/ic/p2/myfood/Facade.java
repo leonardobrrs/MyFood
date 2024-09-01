@@ -7,7 +7,7 @@ import java.io.IOException;
 public class Facade {
     private Sistema sistema;
 
-    public Facade() {
+    public Facade() throws IOException, ClassNotFoundException {
         sistema = new Sistema();
     }
 
@@ -96,6 +96,7 @@ public class Facade {
         return sistema.getNumeroPedido(clienteId, empresaId, indice);
     }
 
-    public void encerrarSistema(){
+    public void encerrarSistema() throws IOException {
+        sistema.encerrarSistema();
     }
 }

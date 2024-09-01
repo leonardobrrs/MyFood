@@ -2,7 +2,11 @@ package br.ufal.ic.p2.myfood;
 
 import br.ufal.ic.p2.myfood.Exceptions.AtributoInvalidoException;
 
-public class Restaurante {
+import java.io.Serializable;
+
+public class Restaurante implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private static int contadorId = 1;
     private int id;
     private String nome;
