@@ -9,14 +9,14 @@ import java.util.Map;
 public class PedidoXML {
 
     private static final String FILE_NAME = "pedidos.xml";
-    private static final DataPersistence DataPersistenceManager = new DataPersistence(FILE_NAME);
+    private static final DataPersistence DataPersistence = new DataPersistence(FILE_NAME);
 
     public static void save(Map<Integer, List<Pedido>> pedidos) {
-        DataPersistenceManager.save(pedidos);
+        DataPersistence.save(pedidos);
     }
 
     @SuppressWarnings("unchecked")
     public static Map<Integer, List<Pedido>> load() {
-        return (Map<Integer, List<Pedido>>) DataPersistenceManager.load();
+        return (Map<Integer, List<Pedido>>) DataPersistence.load();
     }
 }
