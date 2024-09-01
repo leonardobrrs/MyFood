@@ -83,11 +83,6 @@ public class Facade {
         return sistema.getPedidos(numeroPedido, atributo);
     }
 
-/*    public void salvarDadosEmCSV(String caminhoArquivo) throws IOException {
-        sistema.salvarDadosEmCSV(caminhoArquivo);
-    }*/
-
-    public void encerrarSistema() throws IOException {
-/*        sistema.encerrarSistema();*/
+    public void encerrarSistema(){
     }
 }

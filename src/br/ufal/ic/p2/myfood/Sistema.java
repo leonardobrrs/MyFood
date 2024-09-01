@@ -466,23 +466,6 @@ public class Sistema {
         }
     }
 
-
-
-
-
-
-/*    public void salvarDadosEmCSV(String caminhoArquivo) throws IOException {
-        try (FileWriter writer = new FileWriter(caminhoArquivo)) {
-            for (Map.Entry<Integer, Usuario> entry : usuarios.entrySet()) {
-                Integer id = entry.getKey();
-                Usuario usuario = entry.getValue();
-                String linha = id + "," + usuario.getNome() + "," + usuario.getEmail() + "\n";
-                writer.write(linha);
-            }
-        }
-    }*/
-
-    public void encerrarSistema() throws IOException {
-//        salvarDadosEmCSV("usuarios.csv");
+    public void encerrarSistema(){
     }
 }
