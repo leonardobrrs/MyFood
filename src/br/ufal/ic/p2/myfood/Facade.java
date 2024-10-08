@@ -3,6 +3,10 @@ package br.ufal.ic.p2.myfood;
 import br.ufal.ic.p2.myfood.Exceptions.*;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.io.IOException;
 
 public class Facade {
     private Sistema sistema;
@@ -39,7 +43,7 @@ public class Facade {
 
     public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, String abre, String fecha,
                             String tipoMercado) throws NomeEmpresaExistenteException, EnderecoDuplicadoException,
-            UsuarioNaoAutorizadoException {
+            UsuarioNaoAutorizadoException, FormatoHoraInvalidoException {
         try {
             return sistema.criarEmpresa(tipoEmpresa, idDono, nome, endereco, abre, fecha, tipoMercado);
         } catch (NomeEmpresaExistenteException | EnderecoDuplicadoException | UsuarioNaoAutorizadoException e) {

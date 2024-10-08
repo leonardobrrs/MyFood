@@ -3,6 +3,8 @@ package br.ufal.ic.p2.myfood;
 import br.ufal.ic.p2.myfood.Exceptions.*;
 import br.ufal.ic.p2.myfood.services.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.io.IOException;
 
@@ -131,15 +133,24 @@ public class Sistema {
         return empresa.getId();
     }
 
-    //Criar Mercado
-    public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, String abre, String fecha,
-                            String tipoMercado) throws NomeEmpresaExistenteException, EnderecoDuplicadoException,
-            UsuarioNaoAutorizadoException {
+    // Criar Mercado
+    public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, String abre, String fecha, String tipoMercado)
+            throws NomeEmpresaExistenteException, EnderecoDuplicadoException, UsuarioNaoAutorizadoException, FormatoHoraInvalidoException {
 
         // Verificar se o usuário com o ID fornecido é um DonoEmpresa
         Usuario usuario = usuarios.get(idDono);
         if (usuario == null || !usuario.podeCriarEmpresa()) {
             throw new UsuarioNaoAutorizadoException();
+        }
+
+        // Verificar se o formato de hora é válido (validar antes de qualquer verificação de nome/endereço)
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        sdf.setLenient(false);
+        try {
+            sdf.parse(abre);
+            sdf.parse(fecha);
+        } catch (ParseException e) {
+            throw new FormatoHoraInvalidoException();
         }
 
         // Verificar se o dono já possui uma empresa com o mesmo nome e endereço
@@ -174,6 +185,7 @@ public class Sistema {
 
         return empresa.getId();
     }
+
 
     public String getEmpresasDoUsuario(int idDono) throws UsuarioNaoAutorizadoException{
 
