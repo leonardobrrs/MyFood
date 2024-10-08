@@ -6,18 +6,18 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RestauranteSave {
+public class EmpresasSave {
 
-    private static final String FILE_PATH = "restaurantes.dat";
+    private static final String FILE_PATH = "empresas.dat";
 
-    public static void salvarRestaurantes(Map<Integer, Empresa> restaurantes) throws IOException {
+    public static void salvarEmpresas(Map<Integer, Empresa> empresas) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
-            oos.writeObject(restaurantes);
+            oos.writeObject(empresas);
         }
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<Integer, Empresa> carregarRestaurantes() throws IOException, ClassNotFoundException {
+    public static Map<Integer, Empresa> carregarEmpresas() throws IOException, ClassNotFoundException {
         File file = new File(FILE_PATH);
         if (!file.exists()) {
             return new HashMap<>();

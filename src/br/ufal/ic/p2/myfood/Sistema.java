@@ -10,10 +10,8 @@ public class Sistema {
 
     private Map<Integer, Usuario> usuarios;
     private Map<String, Usuario> usuariosPorEmail;
-    private Map<Integer, Empresa> restaurantes;
-    private Map<Integer, List<Empresa>> restaurantesPorDono;
-    private Map<Integer, Empresa> mercado;
-    private Map<Integer, List<Empresa>> mercadoPorDono;
+    private Map<Integer, Empresa> empresas;
+    private Map<Integer, List<Empresa>> empresasPorDono;
     private Map<Integer, Produto> produtos;
     private Map<Integer, List<Produto>> produtosPorRestaurante;
     private Map<Integer, Pedido> pedidos;
@@ -22,10 +20,8 @@ public class Sistema {
     public Sistema() throws IOException, ClassNotFoundException {
         this.usuarios = UsuarioSave.carregarUsuarios();
         this.usuariosPorEmail = new HashMap<>();
-        this.restaurantes = RestauranteSave.carregarRestaurantes();
-        this.restaurantesPorDono = RestaurantePorDonoSave.carregarRestaurantesPorDono();
-        this.mercado = MercadoSave.carregarMercado();
-        this.mercadoPorDono = MercadoPorDonoSave.carregarMercadoPorDono();
+        this.empresas = EmpresasSave.carregarEmpresas();
+        this.empresasPorDono = EmpresasPorDonoSave.carregarEmpresaPorDono();
         /// CRIAR SERVICES SALVAR MERCADO
         this.produtos = ProdutoSave.carregarProdutos();
         this.produtosPorRestaurante = ProdutoPorRestauranteSave.carregarProdutoPorRestaurante();
@@ -36,10 +32,8 @@ public class Sistema {
     public void zerarSistema(){
         this.usuarios.clear();
         this.usuariosPorEmail.clear();
-        this.restaurantes.clear();
-        this.restaurantesPorDono.clear();
-        this.mercado.clear();
-        this.mercadoPorDono.clear();
+        this.empresas.clear();
+        this.empresasPorDono.clear();
         this.produtos.clear();
         this.produtosPorRestaurante.clear();
         this.pedidos.clear();
@@ -106,7 +100,7 @@ public class Sistema {
         }
 
         // Verificar se o dono já possui uma empresa com o mesmo nome e endereço
-        List<Empresa> empresasDoDono = restaurantesPorDono.get(idDono);
+        List<Empresa> empresasDoDono = empresasPorDono.get(idDono);
         if (empresasDoDono != null) {
             for (Empresa empresa : empresasDoDono) {
                 if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
@@ -116,20 +110,20 @@ public class Sistema {
         }
 
         // Verificar se existe uma empresa com o mesmo nome para qualquer dono
-        for (Empresa empresa : restaurantes.values()) {
+        for (Empresa empresa : empresas.values()) {
             if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
                 throw new NomeEmpresaExistenteException();
             }
         }
 
         Restaurante empresa = new Restaurante(nome, endereco, tipoCozinha);
-        restaurantes.put(empresa.getId(), empresa);
+        empresas.put(empresa.getId(), empresa);
 
         // Adicionar o restaurante à lista do dono
-        empresasDoDono = restaurantesPorDono.get(idDono);
+        empresasDoDono = empresasPorDono.get(idDono);
         if (empresasDoDono == null) {
             empresasDoDono = new ArrayList<>();
-            restaurantesPorDono.put(idDono, empresasDoDono);
+            empresasPorDono.put(idDono, empresasDoDono);
         }
 
         empresasDoDono.add(empresa);
@@ -149,7 +143,7 @@ public class Sistema {
         }
 
         // Verificar se o dono já possui uma empresa com o mesmo nome e endereço
-        List<Empresa> empresasDoDono = mercadoPorDono.get(idDono);
+        List<Empresa> empresasDoDono = empresasPorDono.get(idDono);
         if (empresasDoDono != null) {
             for (Empresa empresa : empresasDoDono) {
                 if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
@@ -159,20 +153,20 @@ public class Sistema {
         }
 
         // Verificar se existe uma empresa com o mesmo nome para qualquer dono
-        for (Empresa empresa : mercado.values()) {
+        for (Empresa empresa : empresas.values()) {
             if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
                 throw new NomeEmpresaExistenteException();
             }
         }
 
         Mercado empresa = new Mercado(nome, endereco, abre, fecha, tipoMercado);
-        restaurantes.put(empresa.getId(), empresa);
+        empresas.put(empresa.getId(), empresa);
 
         // Adicionar o restaurante à lista do dono
-        empresasDoDono = mercadoPorDono.get(idDono);
+        empresasDoDono = empresasPorDono.get(idDono);
         if (empresasDoDono == null) {
             empresasDoDono = new ArrayList<>();
-            mercadoPorDono.put(idDono, empresasDoDono);
+            empresasPorDono.put(idDono, empresasDoDono);
         }
 
         empresasDoDono.add(empresa);
@@ -189,7 +183,7 @@ public class Sistema {
         }
 
         // Obter as empresas do dono
-        List<Empresa> empresasDoDono = restaurantesPorDono.get(idDono);
+        List<Empresa> empresasDoDono = empresasPorDono.get(idDono);
         if (empresasDoDono == null || empresasDoDono.isEmpty()) {
             return "{[]}"; // Nenhuma empresa encontrada
         }
@@ -219,7 +213,7 @@ public class Sistema {
         }
 
         // Obtém a lista de empresas do dono
-        List<Empresa> empresas = restaurantesPorDono.get(idDono);
+        List<Empresa> empresas = empresasPorDono.get(idDono);
 
         // Verifica se a lista de empresas é nula ou vazia
         if (empresas == null || empresas.isEmpty()) {
@@ -255,13 +249,13 @@ public class Sistema {
             throw new AtributoInvalidoException();
         }
 
-        Empresa empresa = restaurantes.get(empresaId);
+        Empresa empresa = empresas.get(empresaId);
         if (empresa == null) {
             throw new EmpresaNaoCadastradaException();
         }
 
         if (atributo.equals("dono")) {
-            for (Map.Entry<Integer, List<Empresa>> entry : restaurantesPorDono.entrySet()) {
+            for (Map.Entry<Integer, List<Empresa>> entry : empresasPorDono.entrySet()) {
                 List<Empresa> restaurantesDoDono = entry.getValue();
                 for (Empresa r : restaurantesDoDono) {
                     if (r.getId() == empresaId) {
@@ -337,7 +331,7 @@ public class Sistema {
                 if (atributo.equals("valor")) {
                     return String.format(Locale.US, "%.2f", produto.getValor());
                 } else if (atributo.equals("empresa")) {
-                    Empresa restaurante = restaurantes.get(empresa);
+                    Empresa restaurante = empresas.get(empresa);
                     if (restaurante != null) {
                         return restaurante.getNome();
                     } else {
@@ -354,7 +348,7 @@ public class Sistema {
 
     public String listarProdutos(int empresa)throws EmpresaNaoEncontradaException{
 
-        Empresa restaurante = restaurantes.get(empresa);
+        Empresa restaurante = empresas.get(empresa);
         if (restaurante == null) {
             throw new EmpresaNaoEncontradaException();
         }
@@ -379,14 +373,14 @@ public class Sistema {
 
     public int criarPedido(int clienteId, int empresaId) throws DonoNaoPodePedidoException, PedidoEmAbertoException {
         Usuario cliente = usuarios.get(clienteId);
-        Empresa empresa = restaurantes.get(empresaId);
+        Empresa empresa = empresas.get(empresaId);
 
         if (cliente == null || empresa == null) {
             throw new DonoNaoPodePedidoException();
         }
 
         Usuario donoRestaurante = null;
-        for (Map.Entry<Integer, List<Empresa>> entry : restaurantesPorDono.entrySet()) {
+        for (Map.Entry<Integer, List<Empresa>> entry : empresasPorDono.entrySet()) {
             if (entry.getValue().contains(empresa)) {
                 donoRestaurante = usuarios.get(entry.getKey());
                 break;
@@ -436,7 +430,7 @@ public class Sistema {
         String nomeEmpresaPedido = pedido.getEmpresa();
         Empresa empresa = null;
 
-        for (Empresa r : restaurantes.values()) {
+        for (Empresa r : empresas.values()) {
             if (r.getNome().equals(nomeEmpresaPedido)) {
                 empresa = r;
                 break;
@@ -549,8 +543,8 @@ public class Sistema {
 
     public void encerrarSistema() throws IOException {
         UsuarioSave.salvarUsuarios(usuarios);
-        RestaurantePorDonoSave.salvarRestaurantesPorDono(restaurantesPorDono);
-        RestauranteSave.salvarRestaurantes(restaurantes);
+        EmpresasSave.salvarEmpresas(empresas);
+        EmpresasPorDonoSave.salvarEmpresaPorDono(empresasPorDono);
         ProdutoPorRestauranteSave.salvarProdutoPorRestaurante(produtosPorRestaurante);
         ProdutoSave.salvarProdutos(produtos);
         PedidoSave.salvarPedidos(pedidos);

@@ -7,18 +7,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MercadoPorDonoSave {
+public class EmpresasPorDonoSave {
 
-    private static final String FILE_PATH = "mercadoPorDono.dat";
+    private static final String FILE_PATH = "empresaPorDono.dat";
 
-    public static void salvarMercadoPorDono(Map<Integer, List<Empresa>> mercadoPorDono) throws IOException {
+    public static void salvarEmpresaPorDono(Map<Integer, List<Empresa>> empresaPorDono) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
-            oos.writeObject(mercadoPorDono);
+            oos.writeObject(empresaPorDono);
         }
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<Integer, List<Empresa>> carregarMercadoPorDono() throws IOException, ClassNotFoundException {
+    public static Map<Integer, List<Empresa>> carregarEmpresaPorDono() throws IOException, ClassNotFoundException {
         File file = new File(FILE_PATH);
         if (!file.exists()) {
             return new HashMap<>();
