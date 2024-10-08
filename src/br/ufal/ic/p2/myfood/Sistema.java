@@ -12,6 +12,8 @@ public class Sistema {
     private Map<String, Usuario> usuariosPorEmail;
     private Map<Integer, Empresa> restaurantes;
     private Map<Integer, List<Empresa>> restaurantesPorDono;
+    private Map<Integer, Empresa> mercado;
+    private Map<Integer, List<Empresa>> mercadoPorDono;
     private Map<Integer, Produto> produtos;
     private Map<Integer, List<Produto>> produtosPorRestaurante;
     private Map<Integer, Pedido> pedidos;
@@ -22,6 +24,9 @@ public class Sistema {
         this.usuariosPorEmail = new HashMap<>();
         this.restaurantes = RestauranteSave.carregarRestaurantes();
         this.restaurantesPorDono = RestaurantePorDonoSave.carregarRestaurantesPorDono();
+        this.mercado = MercadoSave.carregarMercado();
+        this.mercadoPorDono = MercadoPorDonoSave.carregarMercadoPorDono();
+        /// CRIAR SERVICES SALVAR MERCADO
         this.produtos = ProdutoSave.carregarProdutos();
         this.produtosPorRestaurante = ProdutoPorRestauranteSave.carregarProdutoPorRestaurante();
         this.pedidos = PedidoSave.carregarPedidos();
@@ -33,6 +38,8 @@ public class Sistema {
         this.usuariosPorEmail.clear();
         this.restaurantes.clear();
         this.restaurantesPorDono.clear();
+        this.mercado.clear();
+        this.mercadoPorDono.clear();
         this.produtos.clear();
         this.produtosPorRestaurante.clear();
         this.pedidos.clear();
@@ -89,6 +96,7 @@ public class Sistema {
         return usuario.getAtributo(atributo);
     }
 
+    ///Criar Restaurante
     public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, String tipoCozinha) throws NomeEmpresaExistenteException, EnderecoDuplicadoException, UsuarioNaoAutorizadoException{
 
         // Verificar se o usuário com o ID fornecido é um DonoRestaurante
@@ -122,6 +130,49 @@ public class Sistema {
         if (empresasDoDono == null) {
             empresasDoDono = new ArrayList<>();
             restaurantesPorDono.put(idDono, empresasDoDono);
+        }
+
+        empresasDoDono.add(empresa);
+
+        return empresa.getId();
+    }
+
+    //Criar Mercado
+    public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, String abre, String fecha,
+     String tipoMercado) throws NomeEmpresaExistenteException, EnderecoDuplicadoException,
+            UsuarioNaoAutorizadoException{
+
+        // Verificar se o usuário com o ID fornecido é um DonoEmpresa
+        Usuario usuario = usuarios.get(idDono);
+        if (usuario == null || !usuario.podeCriarEmpresa()) {
+            throw new UsuarioNaoAutorizadoException();
+        }
+
+        // Verificar se o dono já possui uma empresa com o mesmo nome e endereço
+        List<Empresa> empresasDoDono = mercadoPorDono.get(idDono);
+        if (empresasDoDono != null) {
+            for (Empresa empresa : empresasDoDono) {
+                if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
+                    throw new EnderecoDuplicadoException();
+                }
+            }
+        }
+
+        // Verificar se existe uma empresa com o mesmo nome para qualquer dono
+        for (Empresa empresa : mercado.values()) {
+            if (empresa.getNome().equals(nome) ){
+                throw new NomeEmpresaExistenteException();
+            }
+        }
+
+        Mercado empresa = new Mercado(nome, endereco, abre, fecha, tipoMercado);
+        restaurantes.put(empresa.getId(), empresa);
+
+        // Adicionar o restaurante à lista do dono
+        empresasDoDono = mercadoPorDono.get(idDono);
+        if (empresasDoDono == null) {
+            empresasDoDono = new ArrayList<>();
+            mercadoPorDono.put(idDono, empresasDoDono);
         }
 
         empresasDoDono.add(empresa);

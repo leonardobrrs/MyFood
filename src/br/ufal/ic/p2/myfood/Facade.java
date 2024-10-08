@@ -37,6 +37,12 @@ public class Facade {
         return sistema.criarEmpresa(tipoEmpresa, idDono, nome, endereco, tipoCozinha);
     }
 
+    public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, String abre, String fecha,
+                            String tipoMercado) throws NomeEmpresaExistenteException, EnderecoDuplicadoException,
+            UsuarioNaoAutorizadoException{
+        return sistema.criarEmpresa(tipoEmpresa, idDono, nome, endereco, abre, fecha, tipoMercado);
+    }
+
     public String getEmpresasDoUsuario(int idDono) throws UsuarioNaoAutorizadoException{
         return sistema.getEmpresasDoUsuario(idDono);
     }
