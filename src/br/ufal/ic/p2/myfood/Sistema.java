@@ -135,7 +135,7 @@ public class Sistema {
 
     // Criar Mercado
     public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, String abre, String fecha, String tipoMercado)
-            throws NomeEmpresaExistenteException, EnderecoDuplicadoException, UsuarioNaoAutorizadoException, FormatoHoraInvalidoException {
+            throws NomeEmpresaExistenteException, EnderecoDuplicadoException, UsuarioNaoAutorizadoException, FormatoHoraInvalidoException, HorariosInvalidosException {
 
         // Verificar se o usuário com o ID fornecido é um DonoEmpresa
         Usuario usuario = usuarios.get(idDono);
@@ -144,8 +144,18 @@ public class Sistema {
         }
 
         // Verificar se o formato de hora é válido com expressão regular
-        if (!horaValida(abre) || !horaValida(fecha)) {
+        if (!horaFormatoValido(abre) || !horaFormatoValido(fecha)) {
             throw new FormatoHoraInvalidoException();
+        }
+
+        // Verificar se as horas estão dentro dos limites corretos (00-23 para horas e 00-59 para minutos)
+        if (!horaDentroLimite(abre) || !horaDentroLimite(fecha)) {
+            throw new HorariosInvalidosException();
+        }
+
+        // Verificar se o horário de fechamento é posterior ao de abertura
+        if (!validarOrdemHorarios(abre, fecha)) {
+            throw new HorariosInvalidosException(); // Lançar exceção se o fechamento for antes da abertura
         }
 
         // Verificar se o dono já possui uma empresa com o mesmo nome e endereço
@@ -181,20 +191,43 @@ public class Sistema {
         return empresa.getId();
     }
 
-    // Método auxiliar para verificar se a hora está no formato correto "HH:mm"
-    private boolean horaValida(String hora) {
-        // Verificar se a string tem o formato HH:mm
-        if (!hora.matches("\\d{2}:\\d{2}")) {
-            return false;
-        }
+    // Método auxiliar para verificar o formato da hora
+    private boolean horaFormatoValido(String hora) {
+        return hora.matches("\\d{2}:\\d{2}");
+    }
 
-        // Separar as horas e os minutos
+    // Método auxiliar para verificar se a hora está dentro dos limites corretos
+    private boolean horaDentroLimite(String hora) throws HorariosInvalidosException {
         String[] partes = hora.split(":");
         int horas = Integer.parseInt(partes[0]);
         int minutos = Integer.parseInt(partes[1]);
 
-        // Validar se as horas estão entre 00 e 23 e os minutos entre 00 e 59
-        return horas >= 0 && horas <= 23 && minutos >= 0 && minutos <= 59;
+        if (horas < 0 || horas > 23 || minutos < 0 || minutos > 59) {
+            return false;
+        }
+
+        return true;
+    }
+
+    // Método para validar que o fechamento ocorre após a abertura no mesmo dia
+    private boolean validarOrdemHorarios(String abre, String fecha) {
+        String[] partesAbre = abre.split(":");
+        String[] partesFecha = fecha.split(":");
+
+        int horaAbre = Integer.parseInt(partesAbre[0]);
+        int minutoAbre = Integer.parseInt(partesAbre[1]);
+
+        int horaFecha = Integer.parseInt(partesFecha[0]);
+        int minutoFecha = Integer.parseInt(partesFecha[1]);
+
+        // Verificar se a hora de fechamento é maior que a hora de abertura
+        if (horaFecha < horaAbre) {
+            return false;
+        } else if (horaFecha == horaAbre && minutoFecha <= minutoAbre) {
+            return false; // Verificar se os minutos de fechamento não são menores ou iguais aos minutos de abertura
+        }
+
+        return true;
     }
 
 
