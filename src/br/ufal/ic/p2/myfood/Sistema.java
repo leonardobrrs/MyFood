@@ -136,15 +136,15 @@ public class Sistema {
     // Criar Mercado
     public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, String abre, String fecha, String tipoMercado)
             throws TipoEmpresaInvalidoException, NomeInvalidoException, EnderecoInvalidoException,
-            HorariosInvalidosException,
-            NomeEmpresaExistenteException, EnderecoDuplicadoException, UsuarioNaoAutorizadoException,
-            FormatoHoraInvalidoException, HorariosInvalidosException, TipoMercadoInvalidoException,
-            EnderecoEmpresaInvalidoException, HorarioInvalidoException {
+            HorariosInvalidosException, NomeEmpresaExistenteException, EnderecoDuplicadoException,
+            UsuarioNaoAutorizadoException, FormatoHoraInvalidoException, HorariosInvalidosException,
+            TipoMercadoInvalidoException, EnderecoEmpresaInvalidoException, HorarioInvalidoException {
 
         Usuario usuario = usuarios.get(idDono);
         if (usuario == null || !usuario.podeCriarEmpresa()) {
             throw new UsuarioNaoAutorizadoException();
         }
+
 
         // Verificar se o tipo de empresa é válido (mercado ou restaurante, por exemplo)
         if (tipoEmpresa == null || (!tipoEmpresa.equals("mercado") && !tipoEmpresa.equals("restaurante"))) {
@@ -196,17 +196,21 @@ public class Sistema {
         if (empresasDoDono != null) {
             for (Empresa empresa : empresasDoDono) {
                 if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
-                    throw new EnderecoDuplicadoException();
+                    throw new EnderecoDuplicadoException(); // Mesmo dono não pode ter empresa com mesmo nome e endereço
                 }
             }
         }
 
-        // Verificar se existe uma empresa com o mesmo nome para qualquer dono
+
+
+        // Verificar se existe uma empresa com o mesmo nome e endereço de outro dono
         for (Empresa empresa : empresas.values()) {
-            if (empresa.getNome().equals(nome)) {
-                throw new NomeEmpresaExistenteException();
+            if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
+                throw new NomeEmpresaExistenteException(); // Donos diferentes não podem ter empresa com mesmo nome e endereço
             }
         }
+
+
 
         // Criar a nova empresa
         Mercado empresa = new Mercado(nome, endereco, abre, fecha, tipoMercado);
@@ -223,6 +227,7 @@ public class Sistema {
 
         return empresa.getId();
     }
+
 
 
     // Método auxiliar para verificar o formato da hora
