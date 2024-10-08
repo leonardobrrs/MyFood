@@ -34,3 +34,5 @@ bin/
 /produtoPorRestaurante.dat
 /pedidorPorRestaurante.dat
 /pedido.dat
+/empresaPorDono.dat
+/empresas.dat
