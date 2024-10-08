@@ -141,6 +141,11 @@ public class Sistema {
             FormatoHoraInvalidoException, HorariosInvalidosException, TipoMercadoInvalidoException,
             EnderecoEmpresaInvalidoException, HorarioInvalidoException {
 
+        Usuario usuario = usuarios.get(idDono);
+        if (usuario == null || !usuario.podeCriarEmpresa()) {
+            throw new UsuarioNaoAutorizadoException();
+        }
+
         // Verificar se o tipo de empresa é válido (mercado ou restaurante, por exemplo)
         if (tipoEmpresa == null || (!tipoEmpresa.equals("mercado") && !tipoEmpresa.equals("restaurante"))) {
             throw new TipoEmpresaInvalidoException();
@@ -156,20 +161,19 @@ public class Sistema {
             throw new EnderecoEmpresaInvalidoException();
         }
 
-
-        // Verificar se o formato de hora é válido com expressão regular
-        if (!horaFormatoValido(abre) || !horaFormatoValido(fecha)) {
-            throw new FormatoHoraInvalidoException();
-        }
-
         // Verificar se o horário de abertura é válido
-        if (abre == null || abre.trim().isEmpty()) {
+        if (abre == null) {
             throw new HorarioInvalidoException();
         }
 
         // Verificar se o horário de fechamento é válido
-        if (fecha == null || fecha.trim().isEmpty()) {
+        if (fecha == null) {
             throw new HorarioInvalidoException();
+        }
+
+        // Verificar se o formato de hora é válido com expressão regular
+        if (!horaFormatoValido(abre) || !horaFormatoValido(fecha)) {
+            throw new FormatoHoraInvalidoException();
         }
 
         // Verificar se o tipo de mercado é válido
