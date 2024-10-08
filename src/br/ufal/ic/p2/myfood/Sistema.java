@@ -143,13 +143,8 @@ public class Sistema {
             throw new UsuarioNaoAutorizadoException();
         }
 
-        // Verificar se o formato de hora é válido (validar antes de qualquer verificação de nome/endereço)
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        sdf.setLenient(false);
-        try {
-            sdf.parse(abre);
-            sdf.parse(fecha);
-        } catch (ParseException e) {
+        // Verificar se o formato de hora é válido com expressão regular
+        if (!horaValida(abre) || !horaValida(fecha)) {
             throw new FormatoHoraInvalidoException();
         }
 
@@ -185,6 +180,23 @@ public class Sistema {
 
         return empresa.getId();
     }
+
+    // Método auxiliar para verificar se a hora está no formato correto "HH:mm"
+    private boolean horaValida(String hora) {
+        // Verificar se a string tem o formato HH:mm
+        if (!hora.matches("\\d{2}:\\d{2}")) {
+            return false;
+        }
+
+        // Separar as horas e os minutos
+        String[] partes = hora.split(":");
+        int horas = Integer.parseInt(partes[0]);
+        int minutos = Integer.parseInt(partes[1]);
+
+        // Validar se as horas estão entre 00 e 23 e os minutos entre 00 e 59
+        return horas >= 0 && horas <= 23 && minutos >= 0 && minutos <= 59;
+    }
+
 
 
     public String getEmpresasDoUsuario(int idDono) throws UsuarioNaoAutorizadoException{

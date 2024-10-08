@@ -52,6 +52,8 @@ public class Facade {
         }
     }
 
+
+
     public String getEmpresasDoUsuario(int idDono) throws UsuarioNaoAutorizadoException {
         return sistema.getEmpresasDoUsuario(idDono);
     }
