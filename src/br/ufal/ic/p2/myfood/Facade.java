@@ -43,13 +43,10 @@ public class Facade {
 
     public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, String abre, String fecha,
                             String tipoMercado) throws NomeEmpresaExistenteException, EnderecoDuplicadoException,
-            UsuarioNaoAutorizadoException, FormatoHoraInvalidoException, HorariosInvalidosException {
-        try {
-            return sistema.criarEmpresa(tipoEmpresa, idDono, nome, endereco, abre, fecha, tipoMercado);
-        } catch (NomeEmpresaExistenteException | EnderecoDuplicadoException | UsuarioNaoAutorizadoException e) {
-            // Adicione logs aqui, se necessário
-            throw e; // Relance a exceção após qualquer processamento que desejar
-        }
+            UsuarioNaoAutorizadoException, FormatoHoraInvalidoException, HorariosInvalidosException,
+            TipoEmpresaInvalidoException, TipoMercadoInvalidoException, NomeInvalidoException,
+            EnderecoInvalidoException, EnderecoEmpresaInvalidoException, HorarioInvalidoException {
+        return sistema.criarEmpresa(tipoEmpresa, idDono, nome, endereco, abre, fecha, tipoMercado);
     }
 
 

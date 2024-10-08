@@ -135,12 +135,40 @@ public class Sistema {
 
     // Criar Mercado
     public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, String abre, String fecha, String tipoMercado)
-            throws NomeEmpresaExistenteException, EnderecoDuplicadoException, UsuarioNaoAutorizadoException, FormatoHoraInvalidoException, HorariosInvalidosException {
+            throws TipoEmpresaInvalidoException, NomeInvalidoException, EnderecoInvalidoException,
+            HorariosInvalidosException,
+            NomeEmpresaExistenteException, EnderecoDuplicadoException, UsuarioNaoAutorizadoException,
+            FormatoHoraInvalidoException, HorariosInvalidosException, TipoMercadoInvalidoException,
+            EnderecoEmpresaInvalidoException, HorarioInvalidoException {
 
-        // Verificar se o usuário com o ID fornecido é um DonoEmpresa
-        Usuario usuario = usuarios.get(idDono);
-        if (usuario == null || !usuario.podeCriarEmpresa()) {
-            throw new UsuarioNaoAutorizadoException();
+        // Verificar se o tipo de empresa é válido (mercado ou restaurante, por exemplo)
+        if (tipoEmpresa == null || (!tipoEmpresa.equals("mercado") && !tipoEmpresa.equals("restaurante"))) {
+            throw new TipoEmpresaInvalidoException();
+        }
+
+        // Verificar se o nome da empresa é válido
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new NomeInvalidoException();
+        }
+
+        // Verificar se o endereço da empresa é válido
+        if (endereco == null || endereco.trim().isEmpty()) {
+            throw new EnderecoEmpresaInvalidoException();
+        }
+
+        // Verificar se o horário de abertura é válido
+        if (abre == null || abre.trim().isEmpty()) {
+            throw new HorarioInvalidoException();
+        }
+
+        // Verificar se o horário de fechamento é válido
+        if (fecha == null || fecha.trim().isEmpty()) {
+            throw new HorarioInvalidoException();
+        }
+
+        // Verificar se o tipo de mercado é válido
+        if (tipoMercado == null || tipoMercado.trim().isEmpty()) {
+            throw new TipoMercadoInvalidoException();
         }
 
         // Verificar se o formato de hora é válido com expressão regular
@@ -148,14 +176,14 @@ public class Sistema {
             throw new FormatoHoraInvalidoException();
         }
 
-        // Verificar se as horas estão dentro dos limites corretos (00-23 para horas e 00-59 para minutos)
+        // Verificar se as horas estão dentro dos limites corretos
         if (!horaDentroLimite(abre) || !horaDentroLimite(fecha)) {
             throw new HorariosInvalidosException();
         }
 
         // Verificar se o horário de fechamento é posterior ao de abertura
         if (!validarOrdemHorarios(abre, fecha)) {
-            throw new HorariosInvalidosException(); // Lançar exceção se o fechamento for antes da abertura
+            throw new HorariosInvalidosException();
         }
 
         // Verificar se o dono já possui uma empresa com o mesmo nome e endereço
@@ -163,15 +191,15 @@ public class Sistema {
         if (empresasDoDono != null) {
             for (Empresa empresa : empresasDoDono) {
                 if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
-                    throw new EnderecoDuplicadoException(); // Endereço duplicado para o mesmo dono
+                    throw new EnderecoDuplicadoException();
                 }
             }
         }
 
         // Verificar se existe uma empresa com o mesmo nome para qualquer dono
         for (Empresa empresa : empresas.values()) {
-            if (empresa.getNome().equals(nome)) { // Verifique apenas o nome
-                throw new NomeEmpresaExistenteException(); // Nome já existe, mesmo que o endereço seja diferente
+            if (empresa.getNome().equals(nome)) {
+                throw new NomeEmpresaExistenteException();
             }
         }
 
@@ -190,6 +218,7 @@ public class Sistema {
 
         return empresa.getId();
     }
+
 
     // Método auxiliar para verificar o formato da hora
     private boolean horaFormatoValido(String hora) {
