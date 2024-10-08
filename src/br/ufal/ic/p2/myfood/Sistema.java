@@ -160,7 +160,7 @@ public class Sistema {
 
         // Verificar se existe uma empresa com o mesmo nome para qualquer dono
         for (Empresa empresa : mercado.values()) {
-            if (empresa.getNome().equals(nome) ){
+            if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
                 throw new NomeEmpresaExistenteException();
             }
         }
