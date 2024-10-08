@@ -156,6 +156,12 @@ public class Sistema {
             throw new EnderecoEmpresaInvalidoException();
         }
 
+
+        // Verificar se o formato de hora é válido com expressão regular
+        if (!horaFormatoValido(abre) || !horaFormatoValido(fecha)) {
+            throw new FormatoHoraInvalidoException();
+        }
+
         // Verificar se o horário de abertura é válido
         if (abre == null || abre.trim().isEmpty()) {
             throw new HorarioInvalidoException();
@@ -169,11 +175,6 @@ public class Sistema {
         // Verificar se o tipo de mercado é válido
         if (tipoMercado == null || tipoMercado.trim().isEmpty()) {
             throw new TipoMercadoInvalidoException();
-        }
-
-        // Verificar se o formato de hora é válido com expressão regular
-        if (!horaFormatoValido(abre) || !horaFormatoValido(fecha)) {
-            throw new FormatoHoraInvalidoException();
         }
 
         // Verificar se as horas estão dentro dos limites corretos
