@@ -1,6 +1,6 @@
 package br.ufal.ic.p2.myfood;
 
-public abstract class Entregador extends Usuario{
+public class Entregador extends Usuario{
     private String veiculo;
     private String placa;
 
@@ -26,4 +26,8 @@ public abstract class Entregador extends Usuario{
     public void setPlaca(String placa) {
         this.placa = placa;
     }
+
+public boolean podeCriarEmpresa() {
+    return false; // Entregador não pode criar empresas
+}
 }
