@@ -1,6 +1,6 @@
 # User Story 6 - Criação de Farmacia
-# Permita que um usuário do tipo dono de empresa crie seu restaurante, mercado ou farmacia no MyFood.
-# Todos os metodos que antes funcionava apenas para restaurante ainda devem funcionar para farmacia.
+# Permita que um usuário do tipo dono de empresa crie seu empresa, mercado ou farmacia no MyFood.
+# Todos os metodos que antes funcionava apenas para empresa ainda devem funcionar para farmacia.
 #
 # Os dados gerais para as farmacias são:
 # id -> Que deve ser do tipo int e único gerado pelo sistema.
@@ -62,7 +62,7 @@ eid1=criarEmpresa tipoEmpresa="farmacia" dono=${id2} nome="Farmacia 24 horas do 
 
 eid2=criarEmpresa tipoEmpresa="farmacia" dono=${id2} nome="Farmacia do Carlos" endereco="Rua Segura N 123" aberto24Horas=false numeroFuncionarios=2
 
-# Um dono diferente não pode cadastrar uma empresa com o mesmo nome de uma existente, o dono de um restaurante pode cadastrar uma nova empresa desde que seja em endereço diferente.
+# Um dono diferente não pode cadastrar uma empresa com o mesmo nome de uma existente, o dono de um empresa pode cadastrar uma nova empresa desde que seja em endereço diferente.
 
 expectError "Empresa com esse nome ja existe" criarEmpresa tipoEmpresa="farmacia" dono=${id3} nome="Farmacia do Carlos" endereco="Rua Segura N 987" aberto24Horas=false numeroFuncionarios=2
 

@@ -1,9 +1,9 @@
 # User Story 3 - Criação de Produtos 
-# Permita que um usuário do tipo dono de restaurante crie produtos para sua empresa. 
+# Permita que um usuário do tipo dono de empresa crie produtos para sua empresa.
 #
 # Os dados gerais para os restaurantes são:
 # id -> Que deve ser do tipo int e único gerado pelo sistema.
-# nome -> Informado na criação do tipo String, o mesmo produto não pode ter o mesmo nome cadastrado no mesmo restaurante. 
+# nome -> Informado na criação do tipo String, o mesmo produto não pode ter o mesmo nome cadastrado no mesmo empresa.
 # valor-> Informado na criação do tipo float, pode existir vários produtos com o mesmo valor.
 # categoria-> Informada na criação do tipo String, pode existir vários restaurantes com a mesma categoria..
 #
@@ -42,11 +42,11 @@ criarUsuario nome="RobertoDono" email="roberto@ufal.com.br"  senha="123senha" en
 
 id1=login email="roberto@ufal.com.br" senha="123senha"
 
-eid1=criarEmpresa tipoEmpresa="restaurante"  dono=${id1} nome="Sorveteria do Roberto" endereco="Rua Segura N 987" tipoCozinha="brasileira"
+eid1=criarEmpresa tipoEmpresa="empresa"  dono=${id1} nome="Sorveteria do Roberto" endereco="Rua Segura N 987" tipoCozinha="brasileira"
 
-eid2=criarEmpresa tipoEmpresa="restaurante"  dono=${id1} nome="Pastelaria do Roberto" endereco="Rua Segura N 987" tipoCozinha="brasileira"
+eid2=criarEmpresa tipoEmpresa="empresa"  dono=${id1} nome="Pastelaria do Roberto" endereco="Rua Segura N 987" tipoCozinha="brasileira"
 
-eid3=criarEmpresa tipoEmpresa="restaurante"  dono=${id1} nome="Churrascaria do Roberto" endereco="Rua Segura N 987" tipoCozinha="brasileira"
+eid3=criarEmpresa tipoEmpresa="empresa"  dono=${id1} nome="Churrascaria do Roberto" endereco="Rua Segura N 987" tipoCozinha="brasileira"
 
 
 ###################

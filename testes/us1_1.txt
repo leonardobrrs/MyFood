@@ -30,7 +30,7 @@
 # retorno: Sem retorno
 #
 # criarUsuario(String: nome, String: email, String: senha, String: endereco ,String: cpf)
-# descrição:Cria um usuário do tipo dono de restaurante.
+# descrição:Cria um usuário do tipo dono de empresa.
 # retorno: Sem retorno
 #
 # login(String: email, String: senha)

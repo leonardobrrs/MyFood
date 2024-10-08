@@ -10,8 +10,8 @@ public class Sistema {
 
     private Map<Integer, Usuario> usuarios;
     private Map<String, Usuario> usuariosPorEmail;
-    private Map<Integer, Restaurante> restaurantes;
-    private Map<Integer, List<Restaurante>> restaurantesPorDono;
+    private Map<Integer, Empresa> restaurantes;
+    private Map<Integer, List<Empresa>> restaurantesPorDono;
     private Map<Integer, Produto> produtos;
     private Map<Integer, List<Produto>> produtosPorRestaurante;
     private Map<Integer, Pedido> pedidos;
@@ -98,24 +98,24 @@ public class Sistema {
         }
 
         // Verificar se o dono já possui uma empresa com o mesmo nome e endereço
-        List<Restaurante> empresasDoDono = restaurantesPorDono.get(idDono);
+        List<Empresa> empresasDoDono = restaurantesPorDono.get(idDono);
         if (empresasDoDono != null) {
-            for (Restaurante restaurante : empresasDoDono) {
-                if (restaurante.getNome().equals(nome) && restaurante.getEndereco().equals(endereco)) {
+            for (Empresa empresa : empresasDoDono) {
+                if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
                     throw new EnderecoDuplicadoException();
                 }
             }
         }
 
         // Verificar se existe uma empresa com o mesmo nome para qualquer dono
-        for (Restaurante restaurante : restaurantes.values()) {
-            if (restaurante.getNome().equals(nome) && restaurante.getEndereco().equals(endereco)) {
+        for (Empresa empresa : restaurantes.values()) {
+            if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
                 throw new NomeEmpresaExistenteException();
             }
         }
 
-        Restaurante restaurante = new Restaurante(nome, endereco, tipoCozinha);
-        restaurantes.put(restaurante.getId(), restaurante);
+        Restaurante empresa = new Restaurante(nome, endereco, tipoCozinha);
+        restaurantes.put(empresa.getId(), empresa);
 
         // Adicionar o restaurante à lista do dono
         empresasDoDono = restaurantesPorDono.get(idDono);
@@ -124,9 +124,9 @@ public class Sistema {
             restaurantesPorDono.put(idDono, empresasDoDono);
         }
 
-        empresasDoDono.add(restaurante);
+        empresasDoDono.add(empresa);
 
-        return restaurante.getId();
+        return empresa.getId();
     }
 
     public String getEmpresasDoUsuario(int idDono) throws UsuarioNaoAutorizadoException{
@@ -138,21 +138,21 @@ public class Sistema {
         }
 
         // Obter as empresas do dono
-        List<Restaurante> empresasDoDono = restaurantesPorDono.get(idDono);
+        List<Empresa> empresasDoDono = restaurantesPorDono.get(idDono);
         if (empresasDoDono == null || empresasDoDono.isEmpty()) {
             return "{[]}"; // Nenhuma empresa encontrada
         }
 
         StringBuilder resultado = new StringBuilder("{[");
         for (int i = 0; i < empresasDoDono.size(); i++) {
-            Restaurante restaurante = empresasDoDono.get(i);
+            Empresa empresa = empresasDoDono.get(i);
             if (i > 0) {
                 resultado.append(", ");
             }
             resultado.append("[")
-                    .append(restaurante.getNome())
+                    .append(empresa.getNome())
                     .append(", ")
-                    .append(restaurante.getEndereco())
+                    .append(empresa.getEndereco())
                     .append("]");
         }
         resultado.append("]}");
@@ -168,7 +168,7 @@ public class Sistema {
         }
 
         // Obtém a lista de empresas do dono
-        List<Restaurante> empresas = restaurantesPorDono.get(idDono);
+        List<Empresa> empresas = restaurantesPorDono.get(idDono);
 
         // Verifica se a lista de empresas é nula ou vazia
         if (empresas == null || empresas.isEmpty()) {
@@ -182,9 +182,9 @@ public class Sistema {
 
         List<Integer> idsCorrespondentes = new ArrayList<>();
 
-        for (Restaurante restaurante : empresas) {
-            if (restaurante.getNome().equals(nome)) {
-                idsCorrespondentes.add(restaurante.getId());
+        for (Empresa empresa : empresas) {
+            if (empresa.getNome().equals(nome)) {
+                idsCorrespondentes.add(empresa.getId());
             }
         }
 
@@ -204,15 +204,15 @@ public class Sistema {
             throw new AtributoInvalidoException();
         }
 
-        Restaurante restaurante = restaurantes.get(empresaId);
-        if (restaurante == null) {
+        Empresa empresa = restaurantes.get(empresaId);
+        if (empresa == null) {
             throw new EmpresaNaoCadastradaException();
         }
 
         if (atributo.equals("dono")) {
-            for (Map.Entry<Integer, List<Restaurante>> entry : restaurantesPorDono.entrySet()) {
-                List<Restaurante> restaurantesDoDono = entry.getValue();
-                for (Restaurante r : restaurantesDoDono) {
+            for (Map.Entry<Integer, List<Empresa>> entry : restaurantesPorDono.entrySet()) {
+                List<Empresa> restaurantesDoDono = entry.getValue();
+                for (Empresa r : restaurantesDoDono) {
                     if (r.getId() == empresaId) {
                         return usuarios.get(entry.getKey()).getNome();
                     }
@@ -220,7 +220,7 @@ public class Sistema {
             }
         }
 
-        return restaurante.getAtributo(atributo);
+        return empresa.getAtributo(atributo);
     }
 
     public int criarProduto(int empresa, String nome, float valor, String categoria) throws NomeProdutoExisteException, NomeInvalidoException, ValorInvalidoException, CategoriaInvalidaException{
@@ -286,7 +286,7 @@ public class Sistema {
                 if (atributo.equals("valor")) {
                     return String.format(Locale.US, "%.2f", produto.getValor());
                 } else if (atributo.equals("empresa")) {
-                    Restaurante restaurante = restaurantes.get(empresa);
+                    Empresa restaurante = restaurantes.get(empresa);
                     if (restaurante != null) {
                         return restaurante.getNome();
                     } else {
@@ -303,7 +303,7 @@ public class Sistema {
 
     public String listarProdutos(int empresa)throws EmpresaNaoEncontradaException{
 
-        Restaurante restaurante = restaurantes.get(empresa);
+        Empresa restaurante = restaurantes.get(empresa);
         if (restaurante == null) {
             throw new EmpresaNaoEncontradaException();
         }
@@ -328,15 +328,15 @@ public class Sistema {
 
     public int criarPedido(int clienteId, int empresaId) throws DonoNaoPodePedidoException, PedidoEmAbertoException {
         Usuario cliente = usuarios.get(clienteId);
-        Restaurante restaurante = restaurantes.get(empresaId);
+        Empresa empresa = restaurantes.get(empresaId);
 
-        if (cliente == null || restaurante == null) {
+        if (cliente == null || empresa == null) {
             throw new DonoNaoPodePedidoException();
         }
 
         Usuario donoRestaurante = null;
-        for (Map.Entry<Integer, List<Restaurante>> entry : restaurantesPorDono.entrySet()) {
-            if (entry.getValue().contains(restaurante)) {
+        for (Map.Entry<Integer, List<Empresa>> entry : restaurantesPorDono.entrySet()) {
+            if (entry.getValue().contains(empresa)) {
                 donoRestaurante = usuarios.get(entry.getKey());
                 break;
             }
@@ -355,7 +355,7 @@ public class Sistema {
             }
         }
 
-        Pedido pedido = new Pedido(cliente.getNome(), restaurante.getNome());
+        Pedido pedido = new Pedido(cliente.getNome(), empresa.getNome());
         pedidosDoRestaurante = pedidosPorRestaurante.get(empresaId);
         if (pedidosDoRestaurante == null) {
             pedidosDoRestaurante = new ArrayList<>();
@@ -383,20 +383,20 @@ public class Sistema {
         }
 
         String nomeEmpresaPedido = pedido.getEmpresa();
-        Restaurante restaurante = null;
+        Empresa empresa = null;
 
-        for (Restaurante r : restaurantes.values()) {
+        for (Empresa r : restaurantes.values()) {
             if (r.getNome().equals(nomeEmpresaPedido)) {
-                restaurante = r;
+                empresa = r;
                 break;
             }
         }
 
-        if (restaurante == null) {
+        if (empresa == null) {
             throw new EmpresaNaoEncontradaException();
         }
 
-        List<Produto> produtosDoRestaurante = produtosPorRestaurante.get(restaurante.getId());
+        List<Produto> produtosDoRestaurante = produtosPorRestaurante.get(empresa.getId());
         if (produtosDoRestaurante == null || !produtosDoRestaurante.contains(produto)) {
             throw new ProdutoNaoPertenceEmpresaException();
         }

@@ -51,9 +51,9 @@ zerarSistema
 criarUsuario nome="RobertoDono" email="roberto@ufal.com.br" senha="123senha" endereco="Rua Exemplo N 321" cpf="544.732.410-68"
 id1=login email="roberto@ufal.com.br" senha="123senha"
 
-e1=criarEmpresa tipoEmpresa="restaurante"  dono=${id1} nome="Sorveteria do Roberto" endereco="Rua Segura N 987" tipoCozinha="brasileira"
+e1=criarEmpresa tipoEmpresa="empresa"  dono=${id1} nome="Sorveteria do Roberto" endereco="Rua Segura N 987" tipoCozinha="brasileira"
 
-e2=criarEmpresa tipoEmpresa="restaurante"  dono=${id1} nome="Pastelaria do Roberto" endereco="Rua Segura N 987" tipoCozinha="brasileira"
+e2=criarEmpresa tipoEmpresa="empresa"  dono=${id1} nome="Pastelaria do Roberto" endereco="Rua Segura N 987" tipoCozinha="brasileira"
 
 p1=criarProduto empresa=${e1} nome="Sorvete morango" valor=1.40  categoria="alimento"
 p2=criarProduto empresa=${e1} nome="Sorvete chocolate" valor=1.40  categoria="alimento"

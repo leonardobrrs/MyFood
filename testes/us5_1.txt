@@ -1,6 +1,6 @@
 # User Story 5 - Criação de Mercados
-# Permita que um usuário do tipo dono de empresa crie seu mercad, restaurante ou farmacia no MyFood.
-# Todos os metodos que antes funcionava apenas para restaurante ainda devem funcionar para mercado.
+# Permita que um usuário do tipo dono de empresa crie seu mercad, empresa ou farmacia no MyFood.
+# Todos os metodos que antes funcionava apenas para empresa ainda devem funcionar para mercado.
 #
 # Os dados gerais para os mercados são:
 # id -> Que deve ser do tipo int e único gerado pelo sistema.
@@ -67,7 +67,7 @@ eid1=criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" end
 
 eid2=criarEmpresa tipoEmpresa="mercado"  dono=${id2} nome="Conveniencias do Carlos" endereco="Rua Segura N 123" abre="06:30" fecha="23:59" tipoMercado="minimercado"
 
-# Um dono diferente não pode cadastrar uma empresa com o mesmo nome de uma existente, o dono de um restaurante pode cadastrar uma nova empresa desde que seja em endereço diferente.
+# Um dono diferente não pode cadastrar uma empresa com o mesmo nome de uma existente, o dono de um empresa pode cadastrar uma nova empresa desde que seja em endereço diferente.
 
 expectError "Empresa com esse nome ja existe" criarEmpresa tipoEmpresa="mercado" dono=${id3} nome="Mercado do Carlos" endereco="Rua Segura N 987" abre="07:30" fecha="21:00" tipoMercado="supermercado"
 
@@ -241,7 +241,7 @@ expectError "Horarios invalidos" alterarFuncionamento mercado=${eid4} abre= fech
 expectError "Horarios invalidos" alterarFuncionamento mercado=${eid4} abre="20:52" fecha=
 
 # Apernas mercados tem o horario de antendimento.
-eid5=criarEmpresa tipoEmpresa="restaurante" dono=${id2} nome="Pastelaria do Carlos" endereco="Rua Segura N 987" tipoCozinha="brasileira"
+eid5=criarEmpresa tipoEmpresa="empresa" dono=${id2} nome="Pastelaria do Carlos" endereco="Rua Segura N 987" tipoCozinha="brasileira"
 
 expectError "Nao e um mercado valido" alterarFuncionamento mercado=${eid5} abre="05:25" fecha="22:00"
 

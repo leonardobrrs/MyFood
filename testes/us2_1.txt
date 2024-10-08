@@ -1,5 +1,5 @@
 # User Story 2 - Criação de Restaurantes
-# Permita que um usuário do tipo dono de empresa crie seu restaurante, mercado ou farmacia no MyFood.
+# Permita que um usuário do tipo dono de empresa crie seu empresa, mercado ou farmacia no MyFood.
 #
 # Os dados gerais para os restaurantes são:
 # id -> Que deve ser do tipo int e único gerado pelo sistema.
@@ -53,21 +53,21 @@ id3=login email="roberto@ufal.com.br" senha="123senha"
 # testes de todas as outras combinações importantes para o comando criarEmpresa
 ###################
 
-eid1=criarEmpresa tipoEmpresa="restaurante"  dono=${id2} nome="Pastelaria do Carlos" endereco="Rua Segura N 987" tipoCozinha="brasileira"
+eid1=criarEmpresa tipoEmpresa="empresa"  dono=${id2} nome="Pastelaria do Carlos" endereco="Rua Segura N 987" tipoCozinha="brasileira"
 
-eid2=criarEmpresa tipoEmpresa="restaurante"  dono=${id2} nome="Sushi do Carlos" endereco="Rua Legal N 654" tipoCozinha="japonesa"
+eid2=criarEmpresa tipoEmpresa="empresa"  dono=${id2} nome="Sushi do Carlos" endereco="Rua Legal N 654" tipoCozinha="japonesa"
 
 
-# Um dono diferente não pode cadastrar uma empresa com o mesmo nome de uma existente, o dono de um restaurante pode cadastrar uma nova empresa desde que seja em endereço diferente.
+# Um dono diferente não pode cadastrar uma empresa com o mesmo nome de uma existente, o dono de um empresa pode cadastrar uma nova empresa desde que seja em endereço diferente.
 
-expectError "Empresa com esse nome ja existe" criarEmpresa tipoEmpresa="restaurante"  dono=${id3} nome="Pastelaria do Carlos" endereco="Rua Segura N 987" tipoCozinha="brasileira"
+expectError "Empresa com esse nome ja existe" criarEmpresa tipoEmpresa="empresa"  dono=${id3} nome="Pastelaria do Carlos" endereco="Rua Segura N 987" tipoCozinha="brasileira"
 
-expectError "Proibido cadastrar duas empresas com o mesmo nome e local" criarEmpresa tipoEmpresa="restaurante"  dono=${id2} nome="Pastelaria do Carlos" endereco="Rua Segura N 987" tipoCozinha="brasileira"
+expectError "Proibido cadastrar duas empresas com o mesmo nome e local" criarEmpresa tipoEmpresa="empresa"  dono=${id2} nome="Pastelaria do Carlos" endereco="Rua Segura N 987" tipoCozinha="brasileira"
 
-eid4=criarEmpresa tipoEmpresa="restaurante"  dono=${id2} nome="Pastelaria do Carlos" endereco="Rua Divertida N 1973" tipoCozinha="brasileira"
+eid4=criarEmpresa tipoEmpresa="empresa"  dono=${id2} nome="Pastelaria do Carlos" endereco="Rua Divertida N 1973" tipoCozinha="brasileira"
 
-# Apenas usuários do tipo dono de restaurante podem criar uma empresa.
-expectError "Usuario nao pode criar uma empresa" criarEmpresa tipoEmpresa="restaurante"  dono=${id1} nome="Restaurante do Lucas" endereco="Rua Amigavel N 22" tipoCozinha="brasileira"
+# Apenas usuários do tipo dono de empresa podem criar uma empresa.
+expectError "Usuario nao pode criar uma empresa" criarEmpresa tipoEmpresa="empresa"  dono=${id1} nome="Restaurante do Lucas" endereco="Rua Amigavel N 22" tipoCozinha="brasileira"
 
 # Obtendo donos
 expectError "Usuario nao pode criar uma empresa" getEmpresasDoUsuario idDono=${id1}
@@ -75,7 +75,7 @@ expect "{[[Pastelaria do Carlos, Rua Segura N 987], [Sushi do Carlos, Rua Legal 
 expect "{[]}" getEmpresasDoUsuario idDono=${id3}
 
 # Obtendo os dados dos restaurantes. 
-eid3=criarEmpresa tipoEmpresa="restaurante"  dono=${id3} nome="Sorveteria do Roberto" endereco="Rua Segura N 987" tipoCozinha="brasileira"
+eid3=criarEmpresa tipoEmpresa="empresa"  dono=${id3} nome="Sorveteria do Roberto" endereco="Rua Segura N 987" tipoCozinha="brasileira"
 
 expect "Sorveteria do Roberto" getAtributoEmpresa empresa=${eid3} atributo="nome"
 expect "Rua Segura N 987" getAtributoEmpresa empresa=${eid3} atributo="endereco"

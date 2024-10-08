@@ -25,7 +25,7 @@ O objetivo deste projeto é desenvolver uma plataforma de delivery onde os usuá
 
 * **Proprietários de Restaurantes:** Podem criar e gerenciar suas empresas, além de adicionar e editar produtos. Também têm acesso a informações relacionadas às suas empresas.
 
-O sistema é projetado para ser eficiente e intuitivo, simplificando a gestão de empresas, produtos e pedidos em um ambiente de restaurante. A administração é centralizada, facilitando o acesso e a manipulação dos dados.
+O sistema é projetado para ser eficiente e intuitivo, simplificando a gestão de empresas, produtos e pedidos em um ambiente de empresa. A administração é centralizada, facilitando o acesso e a manipulação dos dados.
 
 ## Como Executar
 

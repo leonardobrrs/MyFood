@@ -64,7 +64,7 @@ criarUsuario nome="CarlosDono" email="carlos@ufal.com.br"  senha="123senha" ende
 
 id2=login email="carlos@ufal.com.br" senha="123senha"
 
-eid1=criarEmpresa tipoEmpresa="restaurante"  dono=${id2} nome="Pastelaria" endereco="Rua Segura N 987" tipoCozinha="brasileira"
+eid1=criarEmpresa tipoEmpresa="empresa"  dono=${id2} nome="Pastelaria" endereco="Rua Segura N 987" tipoCozinha="brasileira"
 eid2=criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado" endereco="Rua Segura N 123" abre="07:30" fecha="21:00" tipoMercado="supermercado"
 eid3=criarEmpresa tipoEmpresa="farmacia" dono=${id2} nome="Farmacia" endereco="Rua Segura N 123" aberto24Horas=true numeroFuncionarios=2
 
