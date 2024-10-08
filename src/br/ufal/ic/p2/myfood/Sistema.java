@@ -133,8 +133,8 @@ public class Sistema {
 
     //Criar Mercado
     public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, String abre, String fecha,
-     String tipoMercado) throws NomeEmpresaExistenteException, EnderecoDuplicadoException,
-            UsuarioNaoAutorizadoException{
+                            String tipoMercado) throws NomeEmpresaExistenteException, EnderecoDuplicadoException,
+            UsuarioNaoAutorizadoException {
 
         // Verificar se o usuário com o ID fornecido é um DonoEmpresa
         Usuario usuario = usuarios.get(idDono);
@@ -147,22 +147,23 @@ public class Sistema {
         if (empresasDoDono != null) {
             for (Empresa empresa : empresasDoDono) {
                 if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
-                    throw new EnderecoDuplicadoException();
+                    throw new EnderecoDuplicadoException(); // Endereço duplicado para o mesmo dono
                 }
             }
         }
 
         // Verificar se existe uma empresa com o mesmo nome para qualquer dono
         for (Empresa empresa : empresas.values()) {
-            if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
-                throw new NomeEmpresaExistenteException();
+            if (empresa.getNome().equals(nome)) { // Verifique apenas o nome
+                throw new NomeEmpresaExistenteException(); // Nome já existe, mesmo que o endereço seja diferente
             }
         }
 
+        // Criar a nova empresa
         Mercado empresa = new Mercado(nome, endereco, abre, fecha, tipoMercado);
         empresas.put(empresa.getId(), empresa);
 
-        // Adicionar o restaurante à lista do dono
+        // Adicionar a empresa à lista do dono
         empresasDoDono = empresasPorDono.get(idDono);
         if (empresasDoDono == null) {
             empresasDoDono = new ArrayList<>();
