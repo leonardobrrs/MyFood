@@ -145,7 +145,6 @@ public class Sistema {
             throw new UsuarioNaoAutorizadoException();
         }
 
-
         // Verificar se o tipo de empresa é válido (mercado ou restaurante, por exemplo)
         if (tipoEmpresa == null || (!tipoEmpresa.equals("mercado") && !tipoEmpresa.equals("restaurante"))) {
             throw new TipoEmpresaInvalidoException();
@@ -183,12 +182,12 @@ public class Sistema {
 
         // Verificar se as horas estão dentro dos limites corretos
         if (!horaDentroLimite(abre) || !horaDentroLimite(fecha)) {
-            throw new HorariosInvalidosException();
+            throw new HorarioInvalidoException();
         }
 
         // Verificar se o horário de fechamento é posterior ao de abertura
         if (!validarOrdemHorarios(abre, fecha)) {
-            throw new HorariosInvalidosException();
+            throw new HorarioInvalidoException();
         }
 
         // Verificar se o dono já possui uma empresa com o mesmo nome e endereço
@@ -201,16 +200,18 @@ public class Sistema {
             }
         }
 
-
-
-        // Verificar se existe uma empresa com o mesmo nome e endereço de outro dono
-        for (Empresa empresa : empresas.values()) {
-            if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
-                throw new NomeEmpresaExistenteException(); // Donos diferentes não podem ter empresa com mesmo nome e endereço
+        // Verificar se outra pessoa já possui uma empresa com o mesmo nome
+        for (Map.Entry<Integer, List<Empresa>> entry : empresasPorDono.entrySet()) {
+            int donoId = entry.getKey();
+            if (donoId != idDono) { // Verifica apenas os donos diferentes
+                List<Empresa> empresasOutroDono = entry.getValue();
+                for (Empresa empresa : empresasOutroDono) {
+                    if (empresa.getNome().equals(nome)) {
+                        throw new NomeEmpresaExistenteException(); // Donos diferentes não podem ter empresas com o mesmo nome
+                    }
+                }
             }
         }
-
-
 
         // Criar a nova empresa
         Mercado empresa = new Mercado(nome, endereco, abre, fecha, tipoMercado);
@@ -227,6 +228,8 @@ public class Sistema {
 
         return empresa.getId();
     }
+
+
 
 
 

@@ -2,7 +2,9 @@ package br.ufal.ic.p2.myfood;
 
 import br.ufal.ic.p2.myfood.Exceptions.AtributoInvalidoException;
 
-public class Mercado extends Empresa {
+import java.io.Serializable;
+
+public class Mercado extends Empresa  {
 
     private String abre; // Hora em HH:MM.
     private String fecha; // Hora em HH:MM.

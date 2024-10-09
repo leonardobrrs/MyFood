@@ -99,10 +99,10 @@ expect "pronto" getPedidos pedido=${pe1} atributo="estado"
 
 expectError "Pedido ja liberado" liberarPedido numero=${pe1}
 
-pe5=criarPedido cliente=${id1} empresa=${eid1}
+pe2=criarPedido cliente=${id1} empresa=${eid1}
 
-adicionarProduto numero=${pe5} produto=${p1}
-adicionarProduto numero=${pe5} produto=${p2}
+adicionarProduto numero=${pe2} produto=${p1}
+adicionarProduto numero=${pe2} produto=${p2}
 
 # Caso o estado não seja pronto.
 expectError "Nao e possivel liberar um produto que nao esta sendo preparado" liberarPedido numero=${pe2}
@@ -129,9 +129,6 @@ adicionarProduto numero=${pe2} produto=${p4}
 
 fecharPedido numero=${pe2}
 
-cadastrarEntregador empresa=${eid1} entregador=${id3}
-cadastrarEntregador empresa=${eid1} entregador=${id4}
-
 expect ${pe1} obterPedido entregador=${id3}
 expect ${pe1} obterPedido entregador=${id4}
 
@@ -148,8 +145,6 @@ liberarPedido numero=${pe2}
 
 expect ${pe1} obterPedido entregador=${id3}
 expect ${pe1} obterPedido entregador=${id4}
-
-cadastrarEntregador empresa=${eid1} entregador=${id3}
 
 expect ${pe3} obterPedido entregador=${id3}
 expect ${pe1} obterPedido entregador=${id4}
