@@ -17,14 +17,34 @@ public class Mercado extends Empresa  {
         this.tipoMercado = tipoMercado;
     }
 
+    // Getter para o horário de abertura
+    public String getAbre() {
+        return abre;
+    }
+
+    // Getter para o horário de fechamento
+    public String getFecha() {
+        return fecha;
+    }
+
+    // Getter para o tipo de mercado
     public String getTipoMercado() {
         return tipoMercado;
     }
 
+    // Sobrescrevendo o método getAtributo para lidar com os atributos do Mercado
+    @Override
     public String getAtributo(String atributo) throws AtributoInvalidoException {
-        if ("tipoMercado".equalsIgnoreCase(atributo)) {
-            return getTipoMercado();
+        switch (atributo.toLowerCase()) {
+            case "abre":
+                return getAbre();
+            case "fecha":
+                return getFecha();
+            case "tipomercado":
+                return getTipoMercado();
+            default:
+                // Para outros atributos, chamamos o método da superclasse (Empresa)
+                return super.getAtributo(atributo);
         }
-        return super.getAtributo(atributo);
     }
 }
