@@ -35,7 +35,7 @@ public class Mercado extends Empresa  {
         return tipoMercado;
     }
 
-
+    // Métodos para definir horários
     public void setAbre(String abre) {
         this.abre = abre;
     }
@@ -45,22 +45,19 @@ public class Mercado extends Empresa  {
     }
 
     @Override
-    public void setAtributo(String atributo) throws AtributoInvalidoException {
+    public void setAtributo(String atributo, String valor) throws AtributoInvalidoException {
         switch (atributo.toLowerCase()) {
             case "abre":
-                setAbre(abre);
+                setAbre(valor); // Passa o valor para o método setAbre
                 return;
             case "fecha":
-                setFecha(fecha);
+                setFecha(valor); // Passa o valor para o método setFecha
                 return;
             default:
                 return;
-                // Para outros atributos, chamamos o método da superclasse (Empresa)
-
         }
     }
 
-    // Sobrescrevendo o método getAtributo para lidar com os atributos do Mercado
     @Override
     public String getAtributo(String atributo) throws AtributoInvalidoException {
         switch (atributo.toLowerCase()) {
@@ -71,7 +68,6 @@ public class Mercado extends Empresa  {
             case "tipomercado":
                 return getTipoMercado();
             default:
-                // Para outros atributos, chamamos o método da superclasse (Empresa)
                 return super.getAtributo(atributo);
         }
     }
