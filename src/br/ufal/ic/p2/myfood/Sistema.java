@@ -305,8 +305,8 @@ public class Sistema {
             throw new MercadoInvalidoException();
         }
 
-        mercado.setAtributo(abre);
-        mercado.setAtributo(fecha);
+        mercado.setAtributo("abre", abre);
+        mercado.setAtributo("fecha", fecha);
     }
 
 

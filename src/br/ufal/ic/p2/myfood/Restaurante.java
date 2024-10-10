@@ -20,7 +20,7 @@ public class Restaurante extends Empresa {
     }
 
     @Override
-    public void setAtributo(String atributo) {
+    public void setAtributo(String atributo, String valor ){
 
     }
 

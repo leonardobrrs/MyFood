@@ -33,7 +33,7 @@ public abstract class Empresa implements Serializable {
     public abstract boolean isMercado();
 
 
-    public abstract void setAtributo(String atributo) throws AtributoInvalidoException;
+    public abstract void setAtributo(String atributo, String valor) throws AtributoInvalidoException;
 
     public String getAtributo(String atributo) throws AtributoInvalidoException {
         switch (atributo) {
