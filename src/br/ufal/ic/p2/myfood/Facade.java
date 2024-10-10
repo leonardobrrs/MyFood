@@ -43,10 +43,14 @@ public class Facade {
 
     public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, String abre, String fecha,
                             String tipoMercado) throws NomeEmpresaExistenteException, EnderecoDuplicadoException,
-            UsuarioNaoAutorizadoException, FormatoHoraInvalidoException, HorariosInvalidosException,
+            UsuarioNaoAutorizadoException, FormatoHoraInvalidoException,
             TipoEmpresaInvalidoException, TipoMercadoInvalidoException, NomeInvalidoException,
             EnderecoInvalidoException, EnderecoEmpresaInvalidoException, HorarioInvalidoException {
         return sistema.criarEmpresa(tipoEmpresa, idDono, nome, endereco, abre, fecha, tipoMercado);
+    }
+
+    public void alterarFuncionamento(int mercadoId, String abre, String fecha) throws AtributoInvalidoException, FormatoHoraInvalidoException, HorarioInvalidoException {
+        sistema.alterarFuncionamento(mercadoId, abre, fecha);
     }
 
 
