@@ -27,4 +27,5 @@ public class Mercado extends Empresa  {
         }
         return super.getAtributo(atributo);
     }
+
 }
