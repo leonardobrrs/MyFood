@@ -135,9 +135,8 @@ public class Sistema {
 
     // Criar Mercado
     public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, String abre, String fecha, String tipoMercado)
-            throws TipoEmpresaInvalidoException, NomeInvalidoException, EnderecoInvalidoException,
-            HorariosInvalidosException, NomeEmpresaExistenteException, EnderecoDuplicadoException,
-            UsuarioNaoAutorizadoException, FormatoHoraInvalidoException, HorariosInvalidosException,
+            throws TipoEmpresaInvalidoException, NomeInvalidoException, EnderecoInvalidoException, NomeEmpresaExistenteException, EnderecoDuplicadoException,
+            UsuarioNaoAutorizadoException, FormatoHoraInvalidoException,
             TipoMercadoInvalidoException, EnderecoEmpresaInvalidoException, HorarioInvalidoException {
 
         Usuario usuario = usuarios.get(idDono);
@@ -231,15 +230,13 @@ public class Sistema {
 
 
 
-
-
     // Método auxiliar para verificar o formato da hora
     private boolean horaFormatoValido(String hora) {
         return hora.matches("\\d{2}:\\d{2}");
     }
 
     // Método auxiliar para verificar se a hora está dentro dos limites corretos
-    private boolean horaDentroLimite(String hora) throws HorariosInvalidosException {
+    private boolean horaDentroLimite(String hora) {
         String[] partes = hora.split(":");
         int horas = Integer.parseInt(partes[0]);
         int minutos = Integer.parseInt(partes[1]);
@@ -272,6 +269,32 @@ public class Sistema {
         return true;
     }
 
+    public void alterarFuncionamento(int mercadoId, String abre, String fecha) throws AtributoInvalidoException, FormatoHoraInvalidoException, HorarioInvalidoException {
+        // Verificar se o mercado existe no sistema
+        if (!empresas.containsKey(mercadoId)) {
+            throw new AtributoInvalidoException();
+        }
+
+        // Verificar se o formato das horas é válido
+        if (!horaFormatoValido(abre) || !horaFormatoValido(fecha)) {
+            throw new FormatoHoraInvalidoException();
+        }
+
+        // Verificar se as horas estão dentro dos limites de 00:00 a 23:59
+        if (!horaDentroLimite(abre) || !horaDentroLimite(fecha)) {
+            throw new HorarioInvalidoException();
+        }
+
+        // Verificar se a hora de fechamento ocorre após a de abertura
+        if (!validarOrdemHorarios(abre, fecha)) {
+            throw new HorarioInvalidoException();
+        }
+
+        // Altera o horário de funcionamento do mercado
+        Empresa mercado = empresas.get(mercadoId);
+        mercado.setAtributo(abre);
+        mercado.setAtributo(fecha);
+    }
 
 
     public String getEmpresasDoUsuario(int idDono) throws UsuarioNaoAutorizadoException{

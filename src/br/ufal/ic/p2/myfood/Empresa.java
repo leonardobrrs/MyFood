@@ -4,7 +4,7 @@ import br.ufal.ic.p2.myfood.Exceptions.AtributoInvalidoException;
 
 import java.io.Serializable;
 
-public class Empresa implements Serializable {
+public abstract class Empresa implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private static int contadorId = 1;
@@ -28,6 +28,8 @@ public class Empresa implements Serializable {
 
     public String getEndereco() { return endereco; }
 
+
+    public abstract void setAtributo(String atributo) throws AtributoInvalidoException;
 
     public String getAtributo(String atributo) throws AtributoInvalidoException {
         switch (atributo) {

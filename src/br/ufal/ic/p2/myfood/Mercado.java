@@ -2,8 +2,6 @@ package br.ufal.ic.p2.myfood;
 
 import br.ufal.ic.p2.myfood.Exceptions.AtributoInvalidoException;
 
-import java.io.Serializable;
-
 public class Mercado extends Empresa  {
 
     private String abre; // Hora em HH:MM.
@@ -30,6 +28,28 @@ public class Mercado extends Empresa  {
     // Getter para o tipo de mercado
     public String getTipoMercado() {
         return tipoMercado;
+    }
+
+
+    public void setAbre(String abre) {
+        this.abre = abre;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
+    }
+
+    @Override
+    public void setAtributo(String atributo) throws AtributoInvalidoException{
+        switch (atributo.toLowerCase()) {
+            case "abre":
+                setAbre(abre);
+            case "fecha":
+                setFecha(fecha);
+            default:
+                // Para outros atributos, chamamos o método da superclasse (Empresa)
+                super.getAtributo(atributo);
+        }
     }
 
     // Sobrescrevendo o método getAtributo para lidar com os atributos do Mercado

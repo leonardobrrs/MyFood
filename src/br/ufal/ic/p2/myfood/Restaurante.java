@@ -14,6 +14,11 @@ public class Restaurante extends Empresa {
         return tipoCozinha;
     }
 
+    @Override
+    public void setAtributo(String atributo) throws AtributoInvalidoException {
+
+    }
+
     public String getAtributo(String atributo) throws AtributoInvalidoException {
         if ("tipoCozinha".equalsIgnoreCase(atributo)) {
             return getTipoCozinha();
