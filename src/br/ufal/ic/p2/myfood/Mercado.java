@@ -45,15 +45,18 @@ public class Mercado extends Empresa  {
     }
 
     @Override
-    public void setAtributo(String atributo) throws AtributoInvalidoException{
+    public void setAtributo(String atributo) throws AtributoInvalidoException {
         switch (atributo.toLowerCase()) {
             case "abre":
                 setAbre(abre);
+                return;
             case "fecha":
                 setFecha(fecha);
+                return;
             default:
+                return;
                 // Para outros atributos, chamamos o método da superclasse (Empresa)
-                super.getAtributo(atributo);
+
         }
     }
 
