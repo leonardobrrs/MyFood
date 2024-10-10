@@ -118,7 +118,7 @@ public class Sistema {
             }
         }
 
-        Restaurante empresa = new Restaurante(nome, endereco, tipoCozinha);
+        Restaurante empresa = new Restaurante(tipoEmpresa, nome, endereco, tipoCozinha);
         empresas.put(empresa.getId(), empresa);
 
         // Adicionar o restaurante à lista do dono
@@ -213,7 +213,7 @@ public class Sistema {
         }
 
         // Criar a nova empresa
-        Mercado empresa = new Mercado(nome, endereco, abre, fecha, tipoMercado);
+        Mercado empresa = new Mercado(tipoEmpresa, nome, endereco, abre, fecha, tipoMercado);
         empresas.put(empresa.getId(), empresa);
 
         // Adicionar a empresa à lista do dono
@@ -236,7 +236,7 @@ public class Sistema {
     }
 
     // Método auxiliar para verificar se a hora está dentro dos limites corretos
-    private boolean horaDentroLimite(String hora) {
+    private boolean horaDentroLimite(String hora) throws HorarioInvalidoException{
         String[] partes = hora.split(":");
         int horas = Integer.parseInt(partes[0]);
         int minutos = Integer.parseInt(partes[1]);
@@ -269,10 +269,17 @@ public class Sistema {
         return true;
     }
 
-    public void alterarFuncionamento(int mercadoId, String abre, String fecha) throws AtributoInvalidoException, FormatoHoraInvalidoException, HorarioInvalidoException {
+    public void alterarFuncionamento(int mercadoId, String abre, String fecha) throws AtributoInvalidoException,
+            FormatoHoraInvalidoException, HorarioInvalidoException, MercadoInvalidoException {
         // Verificar se o mercado existe no sistema
         if (!empresas.containsKey(mercadoId)) {
-            throw new AtributoInvalidoException();
+            throw new MercadoInvalidoException();
+        }
+
+
+        // Verificar se o horário de abertura e fechamento não são nulos
+        if (abre == null || fecha == null) {
+            throw new HorarioInvalidoException();
         }
 
         // Verificar se o formato das horas é válido
@@ -292,9 +299,16 @@ public class Sistema {
 
         // Altera o horário de funcionamento do mercado
         Empresa mercado = empresas.get(mercadoId);
+
+        // Verificar se a empresa é do tipo Mercado
+        if (!mercado.isMercado()) {
+            throw new MercadoInvalidoException();
+        }
+
         mercado.setAtributo(abre);
         mercado.setAtributo(fecha);
     }
+
 
 
     public String getEmpresasDoUsuario(int idDono) throws UsuarioNaoAutorizadoException{

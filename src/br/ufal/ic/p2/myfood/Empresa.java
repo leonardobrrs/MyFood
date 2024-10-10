@@ -9,11 +9,13 @@ public abstract class Empresa implements Serializable {
 
     private static int contadorId = 1;
     private int id;
+    private String tipoEmpresa;
     private String nome;
     private String endereco;
 
-    public Empresa(String nome, String endereco) {
+    public Empresa(String tipoEmpresa, String nome, String endereco) {
         this.id = contadorId++;
+        this.tipoEmpresa = tipoEmpresa;
         this.nome = nome;
         this.endereco = endereco;
     }
@@ -27,6 +29,8 @@ public abstract class Empresa implements Serializable {
     }
 
     public String getEndereco() { return endereco; }
+
+    public abstract boolean isMercado();
 
 
     public abstract void setAtributo(String atributo) throws AtributoInvalidoException;

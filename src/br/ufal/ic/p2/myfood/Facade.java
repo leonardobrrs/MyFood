@@ -49,7 +49,8 @@ public class Facade {
         return sistema.criarEmpresa(tipoEmpresa, idDono, nome, endereco, abre, fecha, tipoMercado);
     }
 
-    public void alterarFuncionamento(int mercadoId, String abre, String fecha) throws AtributoInvalidoException, FormatoHoraInvalidoException, HorarioInvalidoException {
+    public void alterarFuncionamento(int mercadoId, String abre, String fecha) throws AtributoInvalidoException,
+            FormatoHoraInvalidoException, HorarioInvalidoException, MercadoInvalidoException {
         sistema.alterarFuncionamento(mercadoId, abre, fecha);
     }
 
