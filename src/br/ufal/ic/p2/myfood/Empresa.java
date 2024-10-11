@@ -44,6 +44,8 @@ public abstract class Empresa implements Serializable {
 
     public String getEndereco() { return endereco; }
 
+    public String   getTipoEmpresa(){ return tipoEmpresa; }
+
     public abstract boolean isMercado();
 
 

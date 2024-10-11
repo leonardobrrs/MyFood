@@ -852,6 +852,31 @@ public class Sistema {
         return pedido.getNumero();
     }
 
+    public void liberarPedido(int numero) throws PedidoNaoEncontradoException, PedidoJaLiberadoException, NaoEhPossivelLiberarException {
+        Pedido pedido = pedidos.get(numero);
+        if (pedido == null) {
+            throw new PedidoNaoEncontradoException(); // Lança exceção se o pedido não for encontrado
+        }
+
+        if(pedido.getEstado().equals("pronto")){
+            throw new PedidoJaLiberadoException();
+        }
+
+        if(!pedido.getEstado().equals("preparando")){
+            throw new NaoEhPossivelLiberarException();
+        }
+
+        pedido.setEstado("pronto"); // Muda o estado do pedido para "pronto"
+    }
+
+    // Verificar se o entregador trabalha em uma empresa específica
+    private boolean entregadorTrabalhaNaEmpresa(Usuario entregador, Empresa empresa) {
+        List<Empresa> empresasDoEntregador = empresasPorEntregador.get(entregador.getId());
+        return empresasDoEntregador != null && empresasDoEntregador.contains(empresa);
+    }
+
+
+
 
     public void encerrarSistema() throws IOException {
         UsuarioSave.salvarUsuarios(usuarios);

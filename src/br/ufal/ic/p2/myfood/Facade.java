@@ -139,6 +139,10 @@ public class Facade {
         return sistema.getNumeroPedido(clienteId, empresaId, indice);
     }
 
+    public void liberarPedido(int numero) throws PedidoNaoEncontradoException, PedidoJaLiberadoException, NaoEhPossivelLiberarException {
+        sistema.liberarPedido(numero);
+    }
+
     public void encerrarSistema() throws IOException {
         sistema.encerrarSistema();
     }
