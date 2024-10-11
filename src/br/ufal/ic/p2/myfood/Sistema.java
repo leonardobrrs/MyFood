@@ -18,18 +18,18 @@ public class Sistema {
     private Map<Integer, List<Produto>> produtosPorRestaurante;
     private Map<Integer, Pedido> pedidos;
     private Map<Integer, List<Pedido>> pedidosPorRestaurante;
-    private Map<Integer, Integer> empresasPorEntregador;
+    private Map<Integer, List<Empresa>> empresasPorEntregador;
 
     public Sistema() throws IOException, ClassNotFoundException {
         this.usuarios = UsuarioSave.carregarUsuarios();
         this.usuariosPorEmail = new HashMap<>();
         this.empresas = EmpresasSave.carregarEmpresas();
         this.empresasPorDono = EmpresasPorDonoSave.carregarEmpresaPorDono();
-        /// CRIAR SERVICES SALVAR MERCADO
         this.produtos = ProdutoSave.carregarProdutos();
         this.produtosPorRestaurante = ProdutoPorRestauranteSave.carregarProdutoPorRestaurante();
         this.pedidos = PedidoSave.carregarPedidos();
         this.pedidosPorRestaurante = PedidoPorRestauranteSave.carregarPedidosPorRestaurante();
+        this.empresasPorEntregador = EmpresasPorEntregadorSave.carregarEmpresaPorEntregador();
     }
 
     public void zerarSistema(){
@@ -111,25 +111,27 @@ public class Sistema {
         Usuario usuario = usuarios.get(idEntregador); // Assumindo que entregadores também são usuários
 
         if (usuario == null || !usuario.ehEntregador()) {
-            throw new UsuarioNaoEntregadorException();
-        }
-
-
-        if (usuario == null) {
-            throw new EmpresaNaoEncontradaException(); // Entregador não encontrado
+            throw new UsuarioNaoEntregadorException(); // O usuário não é um entregador
         }
 
         // Verificar se o entregador já está cadastrado na empresa
         List<Entregador> entregadoresDaEmpresa = empresa.getEntregadores();
         if (entregadoresDaEmpresa.contains(usuario)) {
-            throw new EmpresaNaoEncontradaException(); // Não pode cadastrar o mesmo entregador duas vezes
+            throw new UsuarioNaoEntregadorException(); // Não pode cadastrar o mesmo entregador duas vezes
         }
 
         Entregador entregador = (Entregador) usuarios.get(idEntregador);
+
         // Cadastrar o entregador na empresa
         entregadoresDaEmpresa.add(entregador);
-        empresa.setEntregadores(entregadoresDaEmpresa); // Atualizar a lista de entregadores da empresa, se necessário
+        empresa.setEntregadores(entregadoresDaEmpresa); // Atualizar a lista de entregadores da empresa
+
+        // Associar a empresa ao entregador no Map empresasPorEntregador
+        List<Empresa> empresasDoEntregador = empresasPorEntregador.getOrDefault(idEntregador, new ArrayList<>());
+        empresasDoEntregador.add(empresa);
+        empresasPorEntregador.put(idEntregador, empresasDoEntregador);
     }
+
 
     public String getEntregadores(int idEmpresa) throws EmpresaNaoEncontradaException {
         // Verificar se a empresa existe
@@ -155,29 +157,31 @@ public class Sistema {
 
     public String getEmpresas(int idEntregador) throws UsuarioNaoEntregadorException {
         // Verificar se o entregador existe
-        Usuario entregador = (Usuario) usuarios.get(idEntregador); // Supõe-se que entregadores também são usuários
+        Usuario entregador = usuarios.get(idEntregador); // Supõe-se que entregadores também são usuários
 
         if (entregador == null || !entregador.ehEntregador()) {
             throw new UsuarioNaoEntregadorException(); // O usuário não é um entregador
         }
 
+        // Obter as empresas associadas ao entregador no Map
+        List<Empresa> empresasDoEntregador = empresasPorEntregador.get(idEntregador);
+
+        // Se o entregador não tiver empresas associadas, retornar uma lista vazia
+        if (empresasDoEntregador == null || empresasDoEntregador.isEmpty()) {
+            return "{}";
+        }
+
         // Criar uma lista para armazenar os detalhes das empresas
         List<String> empresasDetalhes = new ArrayList<>();
 
-        // Obter as empresas em que o entregador está alocado
-        for (Empresa empresa : empresas.values()) { // S
-            List<Entregador> entregadoresDaEmpresa = empresa.getEntregadores();
-
-            // Verificar se o entregador está vinculado a esta empresa
-            if (entregadoresDaEmpresa.contains(entregador)) {
-                // Adiciona o nome e o endereço da empresa à lista
-                String detalhes = "[" + empresa.getNome() + ", " + empresa.getEndereco() + "]";
-                empresasDetalhes.add(detalhes);
-            }
+        for (Empresa empresa : empresasDoEntregador) {
+            String detalhes = "[" + empresa.getNome() + ", " + empresa.getEndereco() + "]";
+            empresasDetalhes.add(detalhes);
         }
 
-        return "{" + empresasDetalhes.toString() + "}"; // Retorna a lista com os detalhes das empresas
+        return "{" + empresasDetalhes.toString() + "}";
     }
+
 
 
 
@@ -857,5 +861,6 @@ public class Sistema {
         ProdutoSave.salvarProdutos(produtos);
         PedidoSave.salvarPedidos(pedidos);
         PedidoPorRestauranteSave.salvarPedidosPorRestaurante(pedidosPorRestaurante);
+        EmpresasPorEntregadorSave.salvarEmpresaPorEntregador(empresasPorEntregador);
     }
 }
