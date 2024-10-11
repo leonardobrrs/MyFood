@@ -309,6 +309,73 @@ public class Sistema {
         mercado.setAtributo("fecha", fecha);
     }
 
+    // Criar Farmacia
+    public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, boolean aberto24Horas,
+                            int numeroFuncionarios)
+            throws TipoEmpresaInvalidoException, NomeInvalidoException, EnderecoInvalidoException, NomeEmpresaExistenteException, EnderecoDuplicadoException,
+            UsuarioNaoAutorizadoException, EnderecoEmpresaInvalidoException {
+
+        // Verificar se o usuário existe e se está autorizado a criar empresas
+        Usuario usuario = usuarios.get(idDono);
+        if (usuario == null || !usuario.podeCriarEmpresa()) {
+            throw new UsuarioNaoAutorizadoException();
+        }
+
+        // Verificar se o tipo de empresa é válido (farmácia neste caso)
+        if (tipoEmpresa == null || !tipoEmpresa.equals("farmacia")) {
+            throw new TipoEmpresaInvalidoException();
+        }
+
+        // Verificar se o nome da farmácia é válido
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new NomeInvalidoException();
+        }
+
+        // Verificar se o endereço da farmácia é válido
+        if (endereco == null || endereco.trim().isEmpty()) {
+            throw new EnderecoEmpresaInvalidoException();
+        }
+
+        // Verificar se o dono já possui uma empresa com o mesmo nome e endereço
+        List<Empresa> empresasDoDono = empresasPorDono.get(idDono);
+        if (empresasDoDono != null) {
+            for (Empresa empresa : empresasDoDono) {
+                if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
+                    throw new EnderecoDuplicadoException(); // Mesmo dono não pode ter farmácia com mesmo nome e endereço
+                }
+            }
+        }
+
+        // Verificar se outra pessoa já possui uma empresa com o mesmo nome
+        for (Map.Entry<Integer, List<Empresa>> entry : empresasPorDono.entrySet()) {
+            int donoId = entry.getKey();
+            if (donoId != idDono) { // Verifica apenas os donos diferentes
+                List<Empresa> empresasOutroDono = entry.getValue();
+                for (Empresa empresa : empresasOutroDono) {
+                    if (empresa.getNome().equals(nome)) {
+                        throw new NomeEmpresaExistenteException(); // Donos diferentes não podem ter empresas com o mesmo nome
+                    }
+                }
+            }
+        }
+
+        // Criar a nova farmácia
+        Farmacia empresa = new Farmacia(tipoEmpresa, nome, endereco, aberto24Horas, numeroFuncionarios);
+        empresas.put(empresa.getId(), empresa);
+
+        // Adicionar a empresa à lista do dono
+        empresasDoDono = empresasPorDono.get(idDono);
+        if (empresasDoDono == null) {
+            empresasDoDono = new ArrayList<>();
+            empresasPorDono.put(idDono, empresasDoDono);
+        }
+
+        empresasDoDono.add(empresa);
+
+        return empresa.getId();
+    }
+
+
 
 
     public String getEmpresasDoUsuario(int idDono) throws UsuarioNaoAutorizadoException{
