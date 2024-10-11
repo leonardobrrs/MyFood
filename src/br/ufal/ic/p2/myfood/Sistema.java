@@ -18,6 +18,7 @@ public class Sistema {
     private Map<Integer, List<Produto>> produtosPorRestaurante;
     private Map<Integer, Pedido> pedidos;
     private Map<Integer, List<Pedido>> pedidosPorRestaurante;
+    private Map<Integer, Integer> empresasPorEntregador;
 
     public Sistema() throws IOException, ClassNotFoundException {
         this.usuarios = UsuarioSave.carregarUsuarios();
@@ -76,6 +77,109 @@ public class Sistema {
         usuarios.put(donoRestaurante.getId(), donoRestaurante);
         usuariosPorEmail.put(email, donoRestaurante);
     }
+
+    ///Criando o usuario entregador
+    public void criarUsuario(String nome, String email, String senha, String endereco, String veiculo, String placa) throws NomeInvalidoException
+            , EmailInvalidoException, SenhaInvalidaException, EnderecoInvalidoException, EmailExistenteException, VeiculoInvalidoException, PlacaInvalidaException {
+
+        if (nome == null || nome.trim().isEmpty()) throw new NomeInvalidoException();
+        if (email == null || !email.contains("@")) throw new EmailInvalidoException();
+        if (senha == null || senha.trim().isEmpty()) throw new SenhaInvalidaException();
+        if (endereco == null || endereco.trim().isEmpty())  throw new EnderecoInvalidoException();
+
+        // Validações de veículo e placa
+        if (veiculo == null || veiculo.trim().isEmpty()) throw new VeiculoInvalidoException();
+        if (placa == null || placa.trim().isEmpty()) throw new PlacaInvalidaException();
+
+        if (usuariosPorEmail.containsKey(email)) throw new EmailExistenteException();
+
+        Entregador entregador = new Entregador(nome, email, senha, endereco, veiculo, placa);
+        usuarios.put(entregador.getId(), entregador);
+        usuariosPorEmail.put(email, entregador);
+    }
+
+    public void cadastrarEntregador(int idEmpresa, int idEntregador)
+            throws EmpresaNaoEncontradaException, UsuarioNaoEntregadorException {
+
+        // Verificar se a empresa existe
+        Empresa empresa = empresas.get(idEmpresa);
+        if (empresa == null) {
+            throw new EmpresaNaoEncontradaException(); // Empresa não encontrada
+        }
+
+        // Verificar se o entregador existe
+        Usuario usuario = usuarios.get(idEntregador); // Assumindo que entregadores também são usuários
+
+        if (usuario == null || !usuario.ehEntregador()) {
+            throw new UsuarioNaoEntregadorException();
+        }
+
+
+        if (usuario == null) {
+            throw new EmpresaNaoEncontradaException(); // Entregador não encontrado
+        }
+
+        // Verificar se o entregador já está cadastrado na empresa
+        List<Entregador> entregadoresDaEmpresa = empresa.getEntregadores();
+        if (entregadoresDaEmpresa.contains(usuario)) {
+            throw new EmpresaNaoEncontradaException(); // Não pode cadastrar o mesmo entregador duas vezes
+        }
+
+        Entregador entregador = (Entregador) usuarios.get(idEntregador);
+        // Cadastrar o entregador na empresa
+        entregadoresDaEmpresa.add(entregador);
+        empresa.setEntregadores(entregadoresDaEmpresa); // Atualizar a lista de entregadores da empresa, se necessário
+    }
+
+    public String getEntregadores(int idEmpresa) throws EmpresaNaoEncontradaException {
+        // Verificar se a empresa existe
+        Empresa empresa = empresas.get(idEmpresa);
+        if (empresa == null) {
+            throw new EmpresaNaoEncontradaException(); // Empresa não encontrada
+        }
+
+        // Obter a lista de entregadores da empresa
+        List<Entregador> entregadoresDaEmpresa = empresa.getEntregadores();
+
+        // Criar um conjunto para armazenar os emails (evita duplicatas)
+        Set<String> emailsEntregadores = new HashSet<>();
+
+        // Preencher o conjunto com os emails dos entregadores
+        for (Entregador entregador : entregadoresDaEmpresa) {
+            emailsEntregadores.add(entregador.getEmail());
+        }
+
+        // Retornar o conjunto como uma string no formato "{[email1, email2]}"
+        return "{" + emailsEntregadores.toString() + "}";
+    }
+
+    public String getEmpresas(int idEntregador) throws UsuarioNaoEntregadorException {
+        // Verificar se o entregador existe
+        Usuario entregador = (Usuario) usuarios.get(idEntregador); // Supõe-se que entregadores também são usuários
+
+        if (entregador == null || !entregador.ehEntregador()) {
+            throw new UsuarioNaoEntregadorException(); // O usuário não é um entregador
+        }
+
+        // Criar uma lista para armazenar os detalhes das empresas
+        List<String> empresasDetalhes = new ArrayList<>();
+
+        // Obter as empresas em que o entregador está alocado
+        for (Empresa empresa : empresas.values()) { // S
+            List<Entregador> entregadoresDaEmpresa = empresa.getEntregadores();
+
+            // Verificar se o entregador está vinculado a esta empresa
+            if (entregadoresDaEmpresa.contains(entregador)) {
+                // Adiciona o nome e o endereço da empresa à lista
+                String detalhes = "[" + empresa.getNome() + ", " + empresa.getEndereco() + "]";
+                empresasDetalhes.add(detalhes);
+            }
+        }
+
+        return "{" + empresasDetalhes.toString() + "}"; // Retorna a lista com os detalhes das empresas
+    }
+
+
 
     public int login(String email, String senha) throws LoginSenhaInvalidosException {
         for (Usuario usuario : usuarios.values()) {

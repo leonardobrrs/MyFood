@@ -9,5 +9,6 @@ public class Cliente extends Usuario{
     public boolean podeCriarEmpresa() {
         return false; // Cliente não pode criar empresas
     }
+    public boolean ehEntregador(){ return false;}
 
 }

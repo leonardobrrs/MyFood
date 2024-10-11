@@ -29,6 +29,25 @@ public class Facade {
         sistema.criarUsuario(nome, email, senha, endereco, cpf);
     }
 
+    public void criarUsuario(String nome, String email, String senha, String endereco, String veiculo, String placa) throws NomeInvalidoException
+            , EmailInvalidoException, SenhaInvalidaException, EnderecoInvalidoException, PlacaInvalidaException, VeiculoInvalidoException,
+            EmailExistenteException {
+        sistema.criarUsuario(nome, email, senha, endereco, veiculo, placa);
+    }
+
+    public void cadastrarEntregador(int idEmpresa, int idEntregador)
+            throws EmpresaNaoEncontradaException, UsuarioNaoEntregadorException {
+        sistema.cadastrarEntregador(idEmpresa, idEntregador);
+    }
+
+    public String getEntregadores(int idEmpresa) throws EmpresaNaoEncontradaException {
+        return sistema.getEntregadores(idEmpresa);
+    }
+
+    public String getEmpresas(int idEntregador) throws UsuarioNaoEntregadorException {
+        return sistema.getEmpresas(idEntregador);
+    }
+
     public int login(String email, String senha) throws LoginSenhaInvalidosException {
         return sistema.login(email, senha);
     }
