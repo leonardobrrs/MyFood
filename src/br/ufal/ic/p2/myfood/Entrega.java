@@ -1,6 +1,8 @@
 package br.ufal.ic.p2.myfood;
 
-public class Entrega {
+import java.io.Serializable;
+
+public class Entrega implements Serializable {
     private int id; // ID único da entrega
     private int idPedido; // ID do pedido
     private int idEntregador; // ID do entregador

@@ -143,13 +143,13 @@ public class Facade {
         sistema.liberarPedido(numero);
     }
 
-    public int obterPedido(int idEntregador) throws UsuarioNaoEntregadorException, PedidoNaoEncontradoException,
-            UsuarioNaoEntregadorDoisException, EntregadorSemEmpresaException {
+    public int obterPedido(int idEntregador) throws NaoExistePedidoEntregaException, UsuarioNaoEntregadorDoisException
+            , EntregadorSemEmpresaException {
         return sistema.obterPedido(idEntregador);
     }
 
     public int criarEntrega(int idPedido, int idEntregador, String destino) throws PedidoNaoEncontradoException,
-            UsuarioNaoEntregadorException, EntregadorNaoValidoException, PedidoNaoProntoException {
+            UsuarioNaoEntregadorException, EntregadorNaoValidoException, PedidoNaoProntoException, EntregadorEmEntregaException {
         return sistema.criarEntrega(idPedido, idEntregador, destino);
     }
 

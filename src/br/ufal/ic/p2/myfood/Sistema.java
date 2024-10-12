@@ -871,7 +871,7 @@ public class Sistema {
         pedido.setEstado("pronto"); // Muda o estado do pedido para "pronto"
     }
 
-    public int obterPedido(int idEntregador) throws UsuarioNaoEntregadorException, PedidoNaoEncontradoException,
+    public int obterPedido(int idEntregador) throws NaoExistePedidoEntregaException,
             UsuarioNaoEntregadorDoisException, EntregadorSemEmpresaException {
         // Verificar se o entregador existe e é válido
         Usuario entregador = usuarios.get(idEntregador);
@@ -879,14 +879,22 @@ public class Sistema {
             throw new UsuarioNaoEntregadorDoisException(); // O usuário não é um entregador
         }
 
-        List<Pedido> pedidosProntos = new ArrayList<>();
+        // Verificar se o entregador está associado a alguma empresa
+        if (!empresasPorEntregador.containsKey(idEntregador) ||
+                empresasPorEntregador.get(idEntregador) == null ||
+                empresasPorEntregador.get(idEntregador).isEmpty()) {
+            throw new EntregadorSemEmpresaException(); // O entregador não está em nenhuma empresa
+        }
 
         // Obter as empresas em que o entregador trabalha
         List<Empresa> empresasDoEntregador = empresasPorEntregador.get(idEntregador);
 
+        // Se o entregador não está associado a nenhuma empresa, lançar exceção
         if (empresasDoEntregador == null || empresasDoEntregador.isEmpty()) {
-            throw new EntregadorSemEmpresaException();
+            throw new EntregadorSemEmpresaException(); // O entregador não está em nenhuma empresa
         }
+
+        List<Pedido> pedidosProntos = new ArrayList<>();
 
         // Iterar pelos pedidos e verificar quais estão prontos e pertencem às empresas do entregador
         for (Pedido pedido : pedidos.values()) {
@@ -903,11 +911,11 @@ public class Sistema {
                     }
                 }
 
+                // Se a empresa não for encontrada, não precisa lançar exceção aqui.
+                // Vamos apenas continuar se a empresa correspondente não for encontrada.
                 if (empresaCorrespondente == null) {
-                    throw new EntregadorSemEmpresaException();
+                    continue; // Pular para o próximo pedido
                 }
-
-                int idEmpresa = empresaCorrespondente.getId(); // Obter o ID da empresa
 
                 // Verificar se a empresa faz parte das empresas do entregador
                 if (empresasDoEntregador.contains(empresaCorrespondente)) {
@@ -916,8 +924,9 @@ public class Sistema {
             }
         }
 
+        // Verificar se existem pedidos prontos
         if (pedidosProntos.isEmpty()) {
-            throw new EntregadorSemEmpresaException();
+            throw new NaoExistePedidoEntregaException(); // Não há pedidos para entrega
         }
 
         // Priorizar pedidos de farmácia
@@ -943,17 +952,23 @@ public class Sistema {
         // Caso não haja pedidos de farmácia, retorna o pedido com o menor ID (mais antigo)
         Pedido pedidoMaisAntigo = pedidosProntos.stream()
                 .min(Comparator.comparingInt(Pedido::getNumero)) // Menor ID de pedido indica o mais antigo
-                .orElseThrow(() -> new EntregadorSemEmpresaException());
+                .orElseThrow(() -> new EntregadorSemEmpresaException()); // Alterado para lançar exceção correta
 
         return pedidoMaisAntigo.getNumero();
     }
 
+
+
     public int criarEntrega(int idPedido, int idEntregador, String destino) throws PedidoNaoEncontradoException,
-            UsuarioNaoEntregadorException, EntregadorNaoValidoException, PedidoNaoProntoException {
+            UsuarioNaoEntregadorException, EntregadorNaoValidoException, PedidoNaoProntoException, EntregadorEmEntregaException {
         // Verificar se o pedido existe
         Pedido pedido = pedidos.get(idPedido);
         if (pedido == null) {
             throw new PedidoNaoEncontradoException(); // Pedido não encontrado
+        }
+
+        if (pedido.getEstado().equals("entregando")) {
+            throw new EntregadorEmEntregaException(); // O pedido não está pronto para entrega
         }
 
         // Verificar o estado do pedido (deve estar pronto para ser entregue)
