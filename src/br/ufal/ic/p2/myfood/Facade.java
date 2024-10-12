@@ -148,6 +148,11 @@ public class Facade {
         return sistema.obterPedido(idEntregador);
     }
 
+    public int criarEntrega(int idPedido, int idEntregador, String destino) throws PedidoNaoEncontradoException,
+            UsuarioNaoEntregadorException, EntregadorNaoValidoException, PedidoNaoProntoException {
+        return sistema.criarEntrega(idPedido, idEntregador, destino);
+    }
+
     public void encerrarSistema() throws IOException {
         sistema.encerrarSistema();
     }

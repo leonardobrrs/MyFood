@@ -19,6 +19,7 @@ public class Sistema {
     private Map<Integer, Pedido> pedidos;
     private Map<Integer, List<Pedido>> pedidosPorRestaurante;
     private Map<Integer, List<Empresa>> empresasPorEntregador;
+    private Map<Integer, Entrega> entregas;
 
     public Sistema() throws IOException, ClassNotFoundException {
         this.usuarios = UsuarioSave.carregarUsuarios();
@@ -30,6 +31,7 @@ public class Sistema {
         this.pedidos = PedidoSave.carregarPedidos();
         this.pedidosPorRestaurante = PedidoPorRestauranteSave.carregarPedidosPorRestaurante();
         this.empresasPorEntregador = EmpresasPorEntregadorSave.carregarEmpresaPorEntregador();
+        this.entregas = EntregaSave.carregarEntregas();
     }
 
     public void zerarSistema(){
@@ -883,7 +885,7 @@ public class Sistema {
         List<Empresa> empresasDoEntregador = empresasPorEntregador.get(idEntregador);
 
         if (empresasDoEntregador == null || empresasDoEntregador.isEmpty()) {
-            throw new PedidoNaoEncontradoException();
+            throw new EntregadorSemEmpresaException();
         }
 
         // Iterar pelos pedidos e verificar quais estão prontos e pertencem às empresas do entregador
@@ -946,6 +948,53 @@ public class Sistema {
         return pedidoMaisAntigo.getNumero();
     }
 
+    public int criarEntrega(int idPedido, int idEntregador, String destino) throws PedidoNaoEncontradoException,
+            UsuarioNaoEntregadorException, EntregadorNaoValidoException, PedidoNaoProntoException {
+        // Verificar se o pedido existe
+        Pedido pedido = pedidos.get(idPedido);
+        if (pedido == null) {
+            throw new PedidoNaoEncontradoException(); // Pedido não encontrado
+        }
+
+        // Verificar o estado do pedido (deve estar pronto para ser entregue)
+        if (!pedido.getEstado().equals("pronto")) {
+            throw new PedidoNaoProntoException(); // O pedido não está pronto para entrega
+        }
+
+        // Verificar se o entregador existe e é válido
+        Usuario entregador = usuarios.get(idEntregador);
+        if (entregador == null || !entregador.ehEntregador()) {
+            throw new EntregadorNaoValidoException(); // O usuário não é um entregador válido
+        }
+
+        // Verificar se o entregador trabalha para a empresa do pedido
+        String nomeEmpresa = pedido.getEmpresa(); // Nome da empresa associada ao pedido
+        Empresa empresaCorrespondente = null;
+        for (Empresa empresa : empresas.values()) {
+            if (empresa.getNome().equals(nomeEmpresa)) {
+                empresaCorrespondente = empresa;
+                break;
+            }
+        }
+
+        if (empresaCorrespondente == null || !empresasPorEntregador.get(idEntregador).contains(empresaCorrespondente)) {
+            throw new EntregadorNaoValidoException(); // O entregador não trabalha para a empresa do pedido
+        }
+
+        // Alterar o estado do pedido para "entregando"
+        pedido.setEstado("entregando");
+
+        // Gerar um novo ID para a entrega (simulando um incremento automático)
+        int idEntrega = entregas.size() + 1; // Atribuir um novo ID de entrega (incremental)
+
+        // Criar o objeto de entrega
+        Entrega novaEntrega = new Entrega(idEntrega, idPedido, idEntregador, destino);
+        entregas.put(idEntrega, novaEntrega); // Adicionar a nova entrega ao mapa de entregas
+
+        // Retornar o ID da entrega criada
+        return idEntrega;
+    }
+
 
 
 
@@ -958,5 +1007,6 @@ public class Sistema {
         PedidoSave.salvarPedidos(pedidos);
         PedidoPorRestauranteSave.salvarPedidosPorRestaurante(pedidosPorRestaurante);
         EmpresasPorEntregadorSave.salvarEmpresaPorEntregador(empresasPorEntregador);
+        EntregaSave.salvarEntregas(entregas);
     }
 }
