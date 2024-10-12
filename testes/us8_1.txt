@@ -75,7 +75,7 @@ p2=criarProduto empresa=${eid1} nome="Refrigerante" valor=3.00  categoria="bebid
 p3=criarProduto empresa=${eid2} nome="Refrigerante" valor=2.40  categoria="bebida"
 p4=criarProduto empresa=${eid2} nome="Sabão" valor=1.25  categoria="limpeza"
 
-p5=criarProduto empresa=${eid3} nome="Paracetamol " valor=2.40  categoria="medicamento"
+p5=criarProduto empresa=${eid3} nome="Paracetamol" valor=2.40  categoria="medicamento"
 p6=criarProduto empresa=${eid3} nome="Agua Oxigenada" valor=5.00  categoria="higiene"
 
 ###################
@@ -99,19 +99,19 @@ expect "pronto" getPedidos pedido=${pe1} atributo="estado"
 
 expectError "Pedido ja liberado" liberarPedido numero=${pe1}
 
-pe2=criarPedido cliente=${id1} empresa=${eid1}
+pe=criarPedido cliente=${id1} empresa=${eid2}
 
-adicionarProduto numero=${pe2} produto=${p1}
-adicionarProduto numero=${pe2} produto=${p2}
+adicionarProduto numero=${pe} produto=${p3}
+adicionarProduto numero=${pe} produto=${p4}
 
 # Caso o estado não seja pronto.
-expectError "Nao e possivel liberar um produto que nao esta sendo preparado" liberarPedido numero=${pe2}
+expectError "Nao e possivel liberar um produto que nao esta sendo preparado" liberarPedido numero=${pe}
 
 ###################
 # testes de todas as combinações importantes para o comando obterPedido.
 ###################
 
-expectError "usuario nao e entregador." obterPedido entregador=${id1}
+expectError "Usuario nao e um entregador." obterPedido entregador=${id1}
 expectError "Entregador nao estar em nenhuma empresa." obterPedido entregador=${id3}
 
 # O mesmo pedido aparece para todos os entregadores que estão vinculados a empresa que tem o pedido pronto, 
@@ -123,11 +123,12 @@ cadastrarEntregador empresa=${eid1} entregador=${id4}
 expect ${pe1} obterPedido entregador=${id4}
 
 # Um novo pedido fica para depois, pedidos mais velhos inicialmente tem preferencia.
-pe2=criarPedido cliente=${id1} empresa=${eid2}
-adicionarProduto numero=${pe2} produto=${p3}
-adicionarProduto numero=${pe2} produto=${p4}
+pe2=criarPedido cliente=${id1} empresa=${eid1}
+adicionarProduto numero=${pe2} produto=${p1}
+adicionarProduto numero=${pe2} produto=${p2}
 
 fecharPedido numero=${pe2}
+liberarPedido numero=${pe2}
 
 expect ${pe1} obterPedido entregador=${id3}
 expect ${pe1} obterPedido entregador=${id4}
@@ -137,14 +138,16 @@ pe3=criarPedido cliente=${id1} empresa=${eid3}
 adicionarProduto numero=${pe3} produto=${p5}
 adicionarProduto numero=${pe3} produto=${p6}
 fecharPedido numero=${pe3}
+
+expect ${pe1} obterPedido entregador=${id3}
+expect ${pe1} obterPedido entregador=${id4}
+
 liberarPedido numero=${pe3}
 
 expect ${pe1} obterPedido entregador=${id3}
 expect ${pe1} obterPedido entregador=${id4}
-liberarPedido numero=${pe2}
 
-expect ${pe1} obterPedido entregador=${id3}
-expect ${pe1} obterPedido entregador=${id4}
+cadastrarEntregador empresa=${eid3} entregador=${id3}
 
 expect ${pe3} obterPedido entregador=${id3}
 expect ${pe1} obterPedido entregador=${id4}
@@ -157,7 +160,7 @@ expectError "Nao e um entregador valido" criarEntrega pedido=${pe1} entregador=$
 expectError "Nao e um entregador valido" criarEntrega pedido=${pe1} entregador=${id2} destino="Rua Segura N 987"
 
 pe4=criarPedido cliente=${id1} empresa=${eid3}
-adicionarProduto numero=${pe3} produto=${p5}
+adicionarProduto numero=${pe4} produto=${p5}
 
 expectError "Pedido nao esta pronto para entrega" criarEntrega pedido=${pe4} entregador=${id1} destino="Rua Segura N 987"
 
@@ -166,7 +169,7 @@ en1=criarEntrega pedido=${epe1} entregador=${id3} destino=
 
 expect "entregando"  getPedidos pedido=${pe3} atributo="estado"
 
-expect ${pe1} obterPedido entregador=${id3}
+expect ${pe4} obterPedido entregador=${id3}
 expect ${pe1} obterPedido entregador=${id4}
 
 epe2=obterPedido entregador=${id3}
@@ -175,8 +178,8 @@ expectError "Entregador ainda em entrega" criarEntrega pedido=${epe2} entregador
 en2=criarEntrega pedido=${epe2} entregador=${id4} destino="Rua Exemplo N 85"
 expect "entregando"  getPedidos pedido=${pe1} atributo="estado"
 
-expect ${pe2} obterPedido entregador=${id3}
-expect ${pe2} obterPedido entregador=${id4}
+expect ${pe1} obterPedido entregador=${id3}
+expect ${pe1} obterPedido entregador=${id4}
 
 ###################
 # testes de todas as combinações importantes para o comando getEntrega.

@@ -49,6 +49,8 @@ public abstract class Empresa implements Serializable {
     public abstract boolean isMercado();
 
 
+    public abstract boolean isFarmacia();
+
     public abstract void setAtributo(String atributo, String valor) throws AtributoInvalidoException;
 
     public String getAtributo(String atributo) throws AtributoInvalidoException {
@@ -57,6 +59,8 @@ public abstract class Empresa implements Serializable {
                 return getNome();
             case "endereco":
                 return getEndereco();
+            case "tipoEmpresa":
+                return getTipoEmpresa();
             default:
                 throw new AtributoInvalidoException();
         }

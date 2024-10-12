@@ -143,6 +143,11 @@ public class Facade {
         sistema.liberarPedido(numero);
     }
 
+    public int obterPedido(int idEntregador) throws UsuarioNaoEntregadorException, PedidoNaoEncontradoException,
+            UsuarioNaoEntregadorDoisException, EntregadorSemEmpresaException {
+        return sistema.obterPedido(idEntregador);
+    }
+
     public void encerrarSistema() throws IOException {
         sistema.encerrarSistema();
     }

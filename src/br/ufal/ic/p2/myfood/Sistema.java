@@ -869,10 +869,81 @@ public class Sistema {
         pedido.setEstado("pronto"); // Muda o estado do pedido para "pronto"
     }
 
-    // Verificar se o entregador trabalha em uma empresa específica
-    private boolean entregadorTrabalhaNaEmpresa(Usuario entregador, Empresa empresa) {
-        List<Empresa> empresasDoEntregador = empresasPorEntregador.get(entregador.getId());
-        return empresasDoEntregador != null && empresasDoEntregador.contains(empresa);
+    public int obterPedido(int idEntregador) throws UsuarioNaoEntregadorException, PedidoNaoEncontradoException,
+            UsuarioNaoEntregadorDoisException, EntregadorSemEmpresaException {
+        // Verificar se o entregador existe e é válido
+        Usuario entregador = usuarios.get(idEntregador);
+        if (entregador == null || !entregador.ehEntregador()) {
+            throw new UsuarioNaoEntregadorDoisException(); // O usuário não é um entregador
+        }
+
+        List<Pedido> pedidosProntos = new ArrayList<>();
+
+        // Obter as empresas em que o entregador trabalha
+        List<Empresa> empresasDoEntregador = empresasPorEntregador.get(idEntregador);
+
+        if (empresasDoEntregador == null || empresasDoEntregador.isEmpty()) {
+            throw new PedidoNaoEncontradoException();
+        }
+
+        // Iterar pelos pedidos e verificar quais estão prontos e pertencem às empresas do entregador
+        for (Pedido pedido : pedidos.values()) {
+            if (pedido.getEstado().equals("pronto")) {
+                // Obter o nome da empresa do pedido (getEmpresa retorna o nome da empresa)
+                String nomeEmpresa = pedido.getEmpresa(); // Nome da empresa
+
+                // Buscar a empresa pelo nome e obter seu ID
+                Empresa empresaCorrespondente = null;
+                for (Empresa empresa : empresas.values()) {
+                    if (empresa.getNome().equals(nomeEmpresa)) { // Comparar nome da empresa
+                        empresaCorrespondente = empresa;
+                        break;
+                    }
+                }
+
+                if (empresaCorrespondente == null) {
+                    throw new EntregadorSemEmpresaException();
+                }
+
+                int idEmpresa = empresaCorrespondente.getId(); // Obter o ID da empresa
+
+                // Verificar se a empresa faz parte das empresas do entregador
+                if (empresasDoEntregador.contains(empresaCorrespondente)) {
+                    pedidosProntos.add(pedido);
+                }
+            }
+        }
+
+        if (pedidosProntos.isEmpty()) {
+            throw new EntregadorSemEmpresaException();
+        }
+
+        // Priorizar pedidos de farmácia
+        Optional<Pedido> pedidoFarmacia = pedidosProntos.stream()
+                .filter(pedido -> {
+                    String nomeEmpresa = pedido.getEmpresa(); // Obter nome da empresa
+                    Empresa empresaCorrespondente = null;
+                    for (Empresa empresa : empresas.values()) {
+                        if (empresa.getNome().equals(nomeEmpresa)) {
+                            empresaCorrespondente = empresa;
+                            break;
+                        }
+                    }
+                    return empresaCorrespondente != null && empresaCorrespondente.getTipoEmpresa().equals("Farmacia");
+                })
+                .min(Comparator.comparingInt(Pedido::getNumero)); // Priorizar o mais antigo de farmácia
+
+        // Se houver um pedido de farmácia pronto, retorna o primeiro
+        if (pedidoFarmacia.isPresent()) {
+            return pedidoFarmacia.get().getNumero();
+        }
+
+        // Caso não haja pedidos de farmácia, retorna o pedido com o menor ID (mais antigo)
+        Pedido pedidoMaisAntigo = pedidosProntos.stream()
+                .min(Comparator.comparingInt(Pedido::getNumero)) // Menor ID de pedido indica o mais antigo
+                .orElseThrow(() -> new EntregadorSemEmpresaException());
+
+        return pedidoMaisAntigo.getNumero();
     }
 
 

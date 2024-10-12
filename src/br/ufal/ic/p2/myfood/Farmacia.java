@@ -19,6 +19,9 @@ public class Farmacia extends Empresa  {
     }
 
     @Override
+    public boolean isFarmacia(){return true;}
+
+    @Override
     public void setAtributo(String atributo, String valor) throws AtributoInvalidoException {
 
     }
