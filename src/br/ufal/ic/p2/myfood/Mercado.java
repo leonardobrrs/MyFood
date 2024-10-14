@@ -20,6 +20,9 @@ public class Mercado extends Empresa  {
         return true;
     }
 
+    @Override
+    public boolean isFarmacia(){return false;}
+
     // Getter para o horário de abertura
     public String getAbre() {
         return abre;
@@ -71,5 +74,4 @@ public class Mercado extends Empresa  {
                 return super.getAtributo(atributo);
         }
     }
-
 }

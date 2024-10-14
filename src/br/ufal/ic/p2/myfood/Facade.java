@@ -29,6 +29,25 @@ public class Facade {
         sistema.criarUsuario(nome, email, senha, endereco, cpf);
     }
 
+    public void criarUsuario(String nome, String email, String senha, String endereco, String veiculo, String placa) throws NomeInvalidoException
+            , EmailInvalidoException, SenhaInvalidaException, EnderecoInvalidoException, PlacaInvalidaException, VeiculoInvalidoException,
+            EmailExistenteException {
+        sistema.criarUsuario(nome, email, senha, endereco, veiculo, placa);
+    }
+
+    public void cadastrarEntregador(int idEmpresa, int idEntregador)
+            throws EmpresaNaoEncontradaException, UsuarioNaoEntregadorException {
+        sistema.cadastrarEntregador(idEmpresa, idEntregador);
+    }
+
+    public String getEntregadores(int idEmpresa) throws EmpresaNaoEncontradaException {
+        return sistema.getEntregadores(idEmpresa);
+    }
+
+    public String getEmpresas(int idEntregador) throws UsuarioNaoEntregadorException {
+        return sistema.getEmpresas(idEntregador);
+    }
+
     public int login(String email, String senha) throws LoginSenhaInvalidosException {
         return sistema.login(email, senha);
     }
@@ -54,6 +73,12 @@ public class Facade {
         sistema.alterarFuncionamento(mercadoId, abre, fecha);
     }
 
+    public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, boolean aberto24Horas,
+                            int numeroFuncionarios)
+            throws TipoEmpresaInvalidoException, NomeInvalidoException, EnderecoInvalidoException, NomeEmpresaExistenteException, EnderecoDuplicadoException,
+            UsuarioNaoAutorizadoException, EnderecoEmpresaInvalidoException{
+        return sistema.criarEmpresa(tipoEmpresa, idDono, nome, endereco, aberto24Horas, numeroFuncionarios);
+    }
 
 
     public String getEmpresasDoUsuario(int idDono) throws UsuarioNaoAutorizadoException {
@@ -112,6 +137,20 @@ public class Facade {
 
     public int getNumeroPedido(int clienteId, int empresaId, int indice) {
         return sistema.getNumeroPedido(clienteId, empresaId, indice);
+    }
+
+    public void liberarPedido(int numero) throws PedidoNaoEncontradoException, PedidoJaLiberadoException, NaoEhPossivelLiberarException {
+        sistema.liberarPedido(numero);
+    }
+
+    public int obterPedido(int idEntregador) throws NaoExistePedidoEntregaException, UsuarioNaoEntregadorDoisException
+            , EntregadorSemEmpresaException {
+        return sistema.obterPedido(idEntregador);
+    }
+
+    public int criarEntrega(int idPedido, int idEntregador, String destino) throws PedidoNaoEncontradoException,
+            UsuarioNaoEntregadorException, EntregadorNaoValidoException, PedidoNaoProntoException, EntregadorEmEntregaException {
+        return sistema.criarEntrega(idPedido, idEntregador, destino);
     }
 
     public void encerrarSistema() throws IOException {

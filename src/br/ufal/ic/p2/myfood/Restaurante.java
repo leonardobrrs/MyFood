@@ -20,6 +20,9 @@ public class Restaurante extends Empresa {
     }
 
     @Override
+    public boolean isFarmacia(){return false;}
+
+    @Override
     public void setAtributo(String atributo, String valor ){
 
     }

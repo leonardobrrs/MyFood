@@ -55,4 +55,5 @@ public abstract class Usuario implements Serializable {
     }
 
     public abstract boolean podeCriarEmpresa();
+    public abstract boolean ehEntregador();
 }

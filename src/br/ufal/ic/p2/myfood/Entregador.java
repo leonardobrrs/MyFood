@@ -1,5 +1,7 @@
 package br.ufal.ic.p2.myfood;
 
+import br.ufal.ic.p2.myfood.Exceptions.AtributoInvalidoException;
+
 public class Entregador extends Usuario{
     private String veiculo;
     private String placa;
@@ -27,7 +29,24 @@ public class Entregador extends Usuario{
         this.placa = placa;
     }
 
-public boolean podeCriarEmpresa() {
+    public String getEmail() {
+        return super.getEmail();
+    }
+
+    @Override
+    public String getAtributo(String atributo) throws AtributoInvalidoException {
+        switch (atributo.toLowerCase()) {
+            case "placa":
+                return getPlaca();
+            case "veiculo":
+                return getVeiculo();
+            default:
+                return super.getAtributo(atributo);
+        }
+    }
+
+    public boolean podeCriarEmpresa() {
     return false; // Entregador não pode criar empresas
 }
+    public boolean ehEntregador(){ return true;}
 }

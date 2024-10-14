@@ -18,17 +18,20 @@ public class Sistema {
     private Map<Integer, List<Produto>> produtosPorRestaurante;
     private Map<Integer, Pedido> pedidos;
     private Map<Integer, List<Pedido>> pedidosPorRestaurante;
+    private Map<Integer, List<Empresa>> empresasPorEntregador;
+    private Map<Integer, Entrega> entregas;
 
     public Sistema() throws IOException, ClassNotFoundException {
         this.usuarios = UsuarioSave.carregarUsuarios();
         this.usuariosPorEmail = new HashMap<>();
         this.empresas = EmpresasSave.carregarEmpresas();
         this.empresasPorDono = EmpresasPorDonoSave.carregarEmpresaPorDono();
-        /// CRIAR SERVICES SALVAR MERCADO
         this.produtos = ProdutoSave.carregarProdutos();
         this.produtosPorRestaurante = ProdutoPorRestauranteSave.carregarProdutoPorRestaurante();
         this.pedidos = PedidoSave.carregarPedidos();
         this.pedidosPorRestaurante = PedidoPorRestauranteSave.carregarPedidosPorRestaurante();
+        this.empresasPorEntregador = EmpresasPorEntregadorSave.carregarEmpresaPorEntregador();
+        this.entregas = EntregaSave.carregarEntregas();
     }
 
     public void zerarSistema(){
@@ -76,6 +79,113 @@ public class Sistema {
         usuarios.put(donoRestaurante.getId(), donoRestaurante);
         usuariosPorEmail.put(email, donoRestaurante);
     }
+
+    ///Criando o usuario entregador
+    public void criarUsuario(String nome, String email, String senha, String endereco, String veiculo, String placa) throws NomeInvalidoException
+            , EmailInvalidoException, SenhaInvalidaException, EnderecoInvalidoException, EmailExistenteException, VeiculoInvalidoException, PlacaInvalidaException {
+
+        if (nome == null || nome.trim().isEmpty()) throw new NomeInvalidoException();
+        if (email == null || !email.contains("@")) throw new EmailInvalidoException();
+        if (senha == null || senha.trim().isEmpty()) throw new SenhaInvalidaException();
+        if (endereco == null || endereco.trim().isEmpty())  throw new EnderecoInvalidoException();
+
+        // Validações de veículo e placa
+        if (veiculo == null || veiculo.trim().isEmpty()) throw new VeiculoInvalidoException();
+        if (placa == null || placa.trim().isEmpty()) throw new PlacaInvalidaException();
+
+        if (usuariosPorEmail.containsKey(email)) throw new EmailExistenteException();
+
+        Entregador entregador = new Entregador(nome, email, senha, endereco, veiculo, placa);
+        usuarios.put(entregador.getId(), entregador);
+        usuariosPorEmail.put(email, entregador);
+    }
+
+    public void cadastrarEntregador(int idEmpresa, int idEntregador)
+            throws EmpresaNaoEncontradaException, UsuarioNaoEntregadorException {
+
+        // Verificar se a empresa existe
+        Empresa empresa = empresas.get(idEmpresa);
+        if (empresa == null) {
+            throw new EmpresaNaoEncontradaException(); // Empresa não encontrada
+        }
+
+        // Verificar se o entregador existe
+        Usuario usuario = usuarios.get(idEntregador); // Assumindo que entregadores também são usuários
+
+        if (usuario == null || !usuario.ehEntregador()) {
+            throw new UsuarioNaoEntregadorException(); // O usuário não é um entregador
+        }
+
+        // Verificar se o entregador já está cadastrado na empresa
+        List<Entregador> entregadoresDaEmpresa = empresa.getEntregadores();
+        if (entregadoresDaEmpresa.contains(usuario)) {
+            throw new UsuarioNaoEntregadorException(); // Não pode cadastrar o mesmo entregador duas vezes
+        }
+
+        Entregador entregador = (Entregador) usuarios.get(idEntregador);
+
+        // Cadastrar o entregador na empresa
+        entregadoresDaEmpresa.add(entregador);
+        empresa.setEntregadores(entregadoresDaEmpresa); // Atualizar a lista de entregadores da empresa
+
+        // Associar a empresa ao entregador no Map empresasPorEntregador
+        List<Empresa> empresasDoEntregador = empresasPorEntregador.getOrDefault(idEntregador, new ArrayList<>());
+        empresasDoEntregador.add(empresa);
+        empresasPorEntregador.put(idEntregador, empresasDoEntregador);
+    }
+
+
+    public String getEntregadores(int idEmpresa) throws EmpresaNaoEncontradaException {
+        // Verificar se a empresa existe
+        Empresa empresa = empresas.get(idEmpresa);
+        if (empresa == null) {
+            throw new EmpresaNaoEncontradaException(); // Empresa não encontrada
+        }
+
+        // Obter a lista de entregadores da empresa
+        List<Entregador> entregadoresDaEmpresa = empresa.getEntregadores();
+
+        // Criar um conjunto para armazenar os emails (evita duplicatas)
+        Set<String> emailsEntregadores = new HashSet<>();
+
+        // Preencher o conjunto com os emails dos entregadores
+        for (Entregador entregador : entregadoresDaEmpresa) {
+            emailsEntregadores.add(entregador.getEmail());
+        }
+
+        // Retornar o conjunto como uma string no formato "{[email1, email2]}"
+        return "{" + emailsEntregadores.toString() + "}";
+    }
+
+    public String getEmpresas(int idEntregador) throws UsuarioNaoEntregadorException {
+        // Verificar se o entregador existe
+        Usuario entregador = usuarios.get(idEntregador); // Supõe-se que entregadores também são usuários
+
+        if (entregador == null || !entregador.ehEntregador()) {
+            throw new UsuarioNaoEntregadorException(); // O usuário não é um entregador
+        }
+
+        // Obter as empresas associadas ao entregador no Map
+        List<Empresa> empresasDoEntregador = empresasPorEntregador.get(idEntregador);
+
+        // Se o entregador não tiver empresas associadas, retornar uma lista vazia
+        if (empresasDoEntregador == null || empresasDoEntregador.isEmpty()) {
+            return "{}";
+        }
+
+        // Criar uma lista para armazenar os detalhes das empresas
+        List<String> empresasDetalhes = new ArrayList<>();
+
+        for (Empresa empresa : empresasDoEntregador) {
+            String detalhes = "[" + empresa.getNome() + ", " + empresa.getEndereco() + "]";
+            empresasDetalhes.add(detalhes);
+        }
+
+        return "{" + empresasDetalhes.toString() + "}";
+    }
+
+
+
 
     public int login(String email, String senha) throws LoginSenhaInvalidosException {
         for (Usuario usuario : usuarios.values()) {
@@ -308,6 +418,73 @@ public class Sistema {
         mercado.setAtributo("abre", abre);
         mercado.setAtributo("fecha", fecha);
     }
+
+    // Criar Farmacia
+    public int criarEmpresa(String tipoEmpresa, int idDono, String nome, String endereco, boolean aberto24Horas,
+                            int numeroFuncionarios)
+            throws TipoEmpresaInvalidoException, NomeInvalidoException, EnderecoInvalidoException, NomeEmpresaExistenteException, EnderecoDuplicadoException,
+            UsuarioNaoAutorizadoException, EnderecoEmpresaInvalidoException {
+
+        // Verificar se o usuário existe e se está autorizado a criar empresas
+        Usuario usuario = usuarios.get(idDono);
+        if (usuario == null || !usuario.podeCriarEmpresa()) {
+            throw new UsuarioNaoAutorizadoException();
+        }
+
+        // Verificar se o tipo de empresa é válido (farmácia neste caso)
+        if (tipoEmpresa == null || !tipoEmpresa.equals("farmacia")) {
+            throw new TipoEmpresaInvalidoException();
+        }
+
+        // Verificar se o nome da farmácia é válido
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new NomeInvalidoException();
+        }
+
+        // Verificar se o endereço da farmácia é válido
+        if (endereco == null || endereco.trim().isEmpty()) {
+            throw new EnderecoEmpresaInvalidoException();
+        }
+
+        // Verificar se o dono já possui uma empresa com o mesmo nome e endereço
+        List<Empresa> empresasDoDono = empresasPorDono.get(idDono);
+        if (empresasDoDono != null) {
+            for (Empresa empresa : empresasDoDono) {
+                if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
+                    throw new EnderecoDuplicadoException(); // Mesmo dono não pode ter farmácia com mesmo nome e endereço
+                }
+            }
+        }
+
+        // Verificar se outra pessoa já possui uma empresa com o mesmo nome
+        for (Map.Entry<Integer, List<Empresa>> entry : empresasPorDono.entrySet()) {
+            int donoId = entry.getKey();
+            if (donoId != idDono) { // Verifica apenas os donos diferentes
+                List<Empresa> empresasOutroDono = entry.getValue();
+                for (Empresa empresa : empresasOutroDono) {
+                    if (empresa.getNome().equals(nome)) {
+                        throw new NomeEmpresaExistenteException(); // Donos diferentes não podem ter empresas com o mesmo nome
+                    }
+                }
+            }
+        }
+
+        // Criar a nova farmácia
+        Farmacia empresa = new Farmacia(tipoEmpresa, nome, endereco, aberto24Horas, numeroFuncionarios);
+        empresas.put(empresa.getId(), empresa);
+
+        // Adicionar a empresa à lista do dono
+        empresasDoDono = empresasPorDono.get(idDono);
+        if (empresasDoDono == null) {
+            empresasDoDono = new ArrayList<>();
+            empresasPorDono.put(idDono, empresasDoDono);
+        }
+
+        empresasDoDono.add(empresa);
+
+        return empresa.getId();
+    }
+
 
 
 
@@ -677,6 +854,164 @@ public class Sistema {
         return pedido.getNumero();
     }
 
+    public void liberarPedido(int numero) throws PedidoNaoEncontradoException, PedidoJaLiberadoException, NaoEhPossivelLiberarException {
+        Pedido pedido = pedidos.get(numero);
+        if (pedido == null) {
+            throw new PedidoNaoEncontradoException(); // Lança exceção se o pedido não for encontrado
+        }
+
+        if(pedido.getEstado().equals("pronto")){
+            throw new PedidoJaLiberadoException();
+        }
+
+        if(!pedido.getEstado().equals("preparando")){
+            throw new NaoEhPossivelLiberarException();
+        }
+
+        pedido.setEstado("pronto"); // Muda o estado do pedido para "pronto"
+    }
+
+    public int obterPedido(int idEntregador) throws NaoExistePedidoEntregaException,
+            UsuarioNaoEntregadorDoisException, EntregadorSemEmpresaException {
+        // Verificar se o entregador existe e é válido
+        Usuario entregador = usuarios.get(idEntregador);
+        if (entregador == null || !entregador.ehEntregador()) {
+            throw new UsuarioNaoEntregadorDoisException(); // O usuário não é um entregador
+        }
+
+        // Verificar se o entregador está associado a alguma empresa
+        if (!empresasPorEntregador.containsKey(idEntregador) ||
+                empresasPorEntregador.get(idEntregador) == null ||
+                empresasPorEntregador.get(idEntregador).isEmpty()) {
+            throw new EntregadorSemEmpresaException(); // O entregador não está em nenhuma empresa
+        }
+
+        // Obter as empresas em que o entregador trabalha
+        List<Empresa> empresasDoEntregador = empresasPorEntregador.get(idEntregador);
+
+        // Se o entregador não está associado a nenhuma empresa, lançar exceção
+        if (empresasDoEntregador == null || empresasDoEntregador.isEmpty()) {
+            throw new EntregadorSemEmpresaException(); // O entregador não está em nenhuma empresa
+        }
+
+        List<Pedido> pedidosProntos = new ArrayList<>();
+
+        // Iterar pelos pedidos e verificar quais estão prontos e pertencem às empresas do entregador
+        for (Pedido pedido : pedidos.values()) {
+            if (pedido.getEstado().equals("pronto")) {
+                // Obter o nome da empresa do pedido (getEmpresa retorna o nome da empresa)
+                String nomeEmpresa = pedido.getEmpresa(); // Nome da empresa
+
+                // Buscar a empresa pelo nome e obter seu ID
+                Empresa empresaCorrespondente = null;
+                for (Empresa empresa : empresas.values()) {
+                    if (empresa.getNome().equals(nomeEmpresa)) { // Comparar nome da empresa
+                        empresaCorrespondente = empresa;
+                        break;
+                    }
+                }
+
+                // Se a empresa não for encontrada, não precisa lançar exceção aqui.
+                // Vamos apenas continuar se a empresa correspondente não for encontrada.
+                if (empresaCorrespondente == null) {
+                    continue; // Pular para o próximo pedido
+                }
+
+                // Verificar se a empresa faz parte das empresas do entregador
+                if (empresasDoEntregador.contains(empresaCorrespondente)) {
+                    pedidosProntos.add(pedido);
+                }
+            }
+        }
+
+        // Verificar se existem pedidos prontos
+        if (pedidosProntos.isEmpty()) {
+            throw new NaoExistePedidoEntregaException(); // Não há pedidos para entrega
+        }
+
+        // Priorizar pedidos de farmácia
+        Optional<Pedido> pedidoFarmacia = pedidosProntos.stream()
+                .filter(pedido -> {
+                    String nomeEmpresa = pedido.getEmpresa(); // Obter nome da empresa
+                    Empresa empresaCorrespondente = null;
+                    for (Empresa empresa : empresas.values()) {
+                        if (empresa.getNome().equals(nomeEmpresa)) {
+                            empresaCorrespondente = empresa;
+                            break;
+                        }
+                    }
+                    return empresaCorrespondente != null && empresaCorrespondente.getTipoEmpresa().equals("Farmacia");
+                })
+                .min(Comparator.comparingInt(Pedido::getNumero)); // Priorizar o mais antigo de farmácia
+
+        // Se houver um pedido de farmácia pronto, retorna o primeiro
+        if (pedidoFarmacia.isPresent()) {
+            return pedidoFarmacia.get().getNumero();
+        }
+
+        // Caso não haja pedidos de farmácia, retorna o pedido com o menor ID (mais antigo)
+        Pedido pedidoMaisAntigo = pedidosProntos.stream()
+                .min(Comparator.comparingInt(Pedido::getNumero)) // Menor ID de pedido indica o mais antigo
+                .orElseThrow(() -> new EntregadorSemEmpresaException()); // Alterado para lançar exceção correta
+
+        return pedidoMaisAntigo.getNumero();
+    }
+
+
+
+    public int criarEntrega(int idPedido, int idEntregador, String destino) throws PedidoNaoEncontradoException,
+            UsuarioNaoEntregadorException, EntregadorNaoValidoException, PedidoNaoProntoException, EntregadorEmEntregaException {
+        // Verificar se o pedido existe
+        Pedido pedido = pedidos.get(idPedido);
+        if (pedido == null) {
+            throw new PedidoNaoEncontradoException(); // Pedido não encontrado
+        }
+
+        if (pedido.getEstado().equals("entregando")) {
+            throw new EntregadorEmEntregaException(); // O pedido não está pronto para entrega
+        }
+
+        // Verificar o estado do pedido (deve estar pronto para ser entregue)
+        if (!pedido.getEstado().equals("pronto")) {
+            throw new PedidoNaoProntoException(); // O pedido não está pronto para entrega
+        }
+
+        // Verificar se o entregador existe e é válido
+        Usuario entregador = usuarios.get(idEntregador);
+        if (entregador == null || !entregador.ehEntregador()) {
+            throw new EntregadorNaoValidoException(); // O usuário não é um entregador válido
+        }
+
+        // Verificar se o entregador trabalha para a empresa do pedido
+        String nomeEmpresa = pedido.getEmpresa(); // Nome da empresa associada ao pedido
+        Empresa empresaCorrespondente = null;
+        for (Empresa empresa : empresas.values()) {
+            if (empresa.getNome().equals(nomeEmpresa)) {
+                empresaCorrespondente = empresa;
+                break;
+            }
+        }
+
+        if (empresaCorrespondente == null || !empresasPorEntregador.get(idEntregador).contains(empresaCorrespondente)) {
+            throw new EntregadorNaoValidoException(); // O entregador não trabalha para a empresa do pedido
+        }
+
+        // Alterar o estado do pedido para "entregando"
+        pedido.setEstado("entregando");
+
+        // Gerar um novo ID para a entrega (simulando um incremento automático)
+        int idEntrega = entregas.size() + 1; // Atribuir um novo ID de entrega (incremental)
+
+        // Criar o objeto de entrega
+        Entrega novaEntrega = new Entrega(idEntrega, idPedido, idEntregador, destino);
+        entregas.put(idEntrega, novaEntrega); // Adicionar a nova entrega ao mapa de entregas
+
+        // Retornar o ID da entrega criada
+        return idEntrega;
+    }
+
+
+
 
     public void encerrarSistema() throws IOException {
         UsuarioSave.salvarUsuarios(usuarios);
@@ -686,5 +1021,7 @@ public class Sistema {
         ProdutoSave.salvarProdutos(produtos);
         PedidoSave.salvarPedidos(pedidos);
         PedidoPorRestauranteSave.salvarPedidosPorRestaurante(pedidosPorRestaurante);
+        EmpresasPorEntregadorSave.salvarEmpresaPorEntregador(empresasPorEntregador);
+        EntregaSave.salvarEntregas(entregas);
     }
 }
