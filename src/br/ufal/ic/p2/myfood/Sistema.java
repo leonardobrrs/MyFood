@@ -1014,6 +1014,49 @@ public class Sistema {
         return idEntrega;
     }
 
+    public String getEntrega(int id, String atributo) throws EntregadorEmEntregaException, AtributoInvalidoException, IOException, ClassNotFoundException, AtributoNaoExisteException {
+        // Retrieve the delivery by ID
+        Entrega entrega = entregas.get(id);
+        if (entrega == null) {
+            throw new EntregadorEmEntregaException(); // Delivery not found
+        }
+
+        if (atributo == null || atributo.trim().isEmpty()) {
+            throw new AtributoInvalidoException();
+        }
+
+        // Return the requested attribute as a string
+        return entrega.getAtributo(atributo);
+    }
+
+    public int getIdEntrega(int pedido) throws PedidoNaoEncontradoException {
+        // Iterate over the deliveries to find the one with the given order ID
+        for (Entrega entrega : entregas.values()) {
+            if (entrega.getIdPedido() == pedido) {
+                return entrega.getId();
+            }
+        }
+        throw new PedidoNaoEncontradoException(); // No delivery found for the given order ID
+    }
+
+    public void entregar(int idEntrega) throws EntregadorEmEntregaException, PedidoNaoEncontradoException {
+        // Retrieve the delivery object
+        Entrega entrega = entregas.get(idEntrega);
+        if (entrega == null) {
+            throw new EntregadorEmEntregaException(); // Delivery not found
+        }
+
+        // Retrieve the associated order (pedido)
+        Pedido pedido = pedidos.get(entrega.getIdPedido());
+        if (pedido == null) {
+            throw new PedidoNaoEncontradoException(); // Order not found
+        }
+
+        // Mark the order as delivered
+        pedido.setEstado("entregue");
+    }
+
+
 
 
 

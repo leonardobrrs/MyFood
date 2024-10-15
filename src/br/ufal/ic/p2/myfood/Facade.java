@@ -153,6 +153,20 @@ public class Facade {
         return sistema.criarEntrega(idPedido, idEntregador, destino);
     }
 
+    public String getEntrega(int id, String atributo) throws EntregadorEmEntregaException, AtributoInvalidoException, IOException, ClassNotFoundException, AtributoNaoExisteException {
+        return sistema.getEntrega(id, atributo);
+    }
+
+    public int getIdEntrega(int pedido) throws PedidoNaoEncontradoException {
+        return sistema.getIdEntrega(pedido);
+    }
+
+    public void entregar(int idEntrega) throws EntregadorEmEntregaException, PedidoNaoEncontradoException {
+        // Retrieve the delivery object
+        sistema.entregar(idEntrega);
+    }
+
+
     public void encerrarSistema() throws IOException {
         sistema.encerrarSistema();
     }
