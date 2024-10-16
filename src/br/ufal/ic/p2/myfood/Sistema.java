@@ -82,12 +82,21 @@ public class Sistema {
 
     ///Criando o usuario entregador
     public void criarUsuario(String nome, String email, String senha, String endereco, String veiculo, String placa) throws NomeInvalidoException
-            , EmailInvalidoException, SenhaInvalidaException, EnderecoInvalidoException, EmailExistenteException, VeiculoInvalidoException, PlacaInvalidaException {
+            , EmailInvalidoException, SenhaInvalidaException, EnderecoInvalidoException, EmailExistenteException, VeiculoInvalidoException, PlacaInvalidaException, AtributoInvalidoException {
 
         if (nome == null || nome.trim().isEmpty()) throw new NomeInvalidoException();
         if (email == null || !email.contains("@")) throw new EmailInvalidoException();
         if (senha == null || senha.trim().isEmpty()) throw new SenhaInvalidaException();
         if (endereco == null || endereco.trim().isEmpty())  throw new EnderecoInvalidoException();
+
+        // Verifica se a placa já foi cadastrada
+        for (Usuario entregador : usuarios.values()) {
+            if(entregador.ehEntregador()) {
+                if (entregador.getAtributo("placa").equals(placa)) {
+                    throw new PlacaInvalidaException();
+                }
+            }
+        }
 
         // Validações de veículo e placa
         if (veiculo == null || veiculo.trim().isEmpty()) throw new VeiculoInvalidoException();
@@ -999,6 +1008,13 @@ public class Sistema {
         if (empresaCorrespondente == null || !empresasPorEntregador.get(idEntregador).contains(empresaCorrespondente)) {
             throw new EntregadorNaoValidoException(); // O entregador não trabalha para a empresa do pedido
         }
+        String destino_of = destino;
+        if(destino == null){
+            String id_cliente = pedido.getCliente();
+            Usuario cliente = usuarios.get(id_cliente);
+            destino_of = cliente.getEndereco();
+
+        }
 
         // Alterar o estado do pedido para "entregando"
         pedido.setEstado("entregando");
@@ -1007,7 +1023,7 @@ public class Sistema {
         int idEntrega = entregas.size() + 1; // Atribuir um novo ID de entrega (incremental)
 
         // Criar o objeto de entrega
-        Entrega novaEntrega = new Entrega(idEntrega, idPedido, idEntregador, destino);
+        Entrega novaEntrega = new Entrega(idEntrega, idPedido, idEntregador, destino_of);
         entregas.put(idEntrega, novaEntrega); // Adicionar a nova entrega ao mapa de entregas
 
         // Retornar o ID da entrega criada

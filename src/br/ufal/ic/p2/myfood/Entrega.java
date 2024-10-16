@@ -46,7 +46,10 @@ public class Entrega implements Serializable {
         Map<Integer, Pedido> pedidos = PedidoSave.carregarPedidos();
         Pedido pedido = pedidos.get(idPedido);
         Map<Integer, Usuario> usuarios = UsuarioSave.carregarUsuarios();// Assuming there's a map of pedidos
-        Usuario entregador = usuarios.get(idEntregador); // Assuming there's a map of usuarios
+        Usuario entregador = usuarios.get(idEntregador);
+
+        pedidos.clear();
+        usuarios.clear();
 
         switch (atributo.toLowerCase()) {
             case "pedido":
@@ -71,5 +74,6 @@ public class Entrega implements Serializable {
             default:
                 throw new AtributoNaoExisteException();
         }
+
     }
 }

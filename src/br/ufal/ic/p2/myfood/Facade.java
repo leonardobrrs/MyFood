@@ -31,7 +31,7 @@ public class Facade {
 
     public void criarUsuario(String nome, String email, String senha, String endereco, String veiculo, String placa) throws NomeInvalidoException
             , EmailInvalidoException, SenhaInvalidaException, EnderecoInvalidoException, PlacaInvalidaException, VeiculoInvalidoException,
-            EmailExistenteException {
+            EmailExistenteException, AtributoInvalidoException {
         sistema.criarUsuario(nome, email, senha, endereco, veiculo, placa);
     }
 
