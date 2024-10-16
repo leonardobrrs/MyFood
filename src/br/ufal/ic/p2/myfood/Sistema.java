@@ -1009,12 +1009,12 @@ public class Sistema {
             throw new EntregadorNaoValidoException(); // O entregador não trabalha para a empresa do pedido
         }
         String destino_of = destino;
-        if(destino == null){
-            String id_cliente = pedido.getCliente();
-            Usuario cliente = usuarios.get(id_cliente);
-            destino_of = cliente.getEndereco();
-
-        }
+//        if(destino == null){
+//            String id_cliente = pedido.getCliente();
+//            Usuario cliente = usuarios.get(id_cliente);
+//            destino_of = cliente.getEndereco();
+//
+//        }
 
         // Alterar o estado do pedido para "entregando"
         pedido.setEstado("entregando");
